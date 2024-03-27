@@ -43,10 +43,13 @@ int MrClock_status=1; //start with stopped clock
 
 int MrSpeedPrev = 1000; //previous setting of speed
 
-//natáhnutí nového firmware
-//esp32FOTA esp32FOTA("MrClock_v1", verze, false, true);
-//const char* manifest_url = "http://fwota.krodyl.cz/MrClockv1/mrclockv1.json";
+int ver = 240327;
 
+//automated upload software
+/*
+esp32FOTA esp32FOTA("MrClock_v1", ver, false, true);
+const char* manifest_url = "url to JSON";
+*/
 //! Long time delay, it is recommended to use shallow sleep, which can effectively reduce the current consumption
 void espDelay(int ms)
 {
@@ -222,9 +225,10 @@ void setup()
     btn2.setLongClickHandler(btn_handler);
 
     wm.setConnectTimeout(20); // how long to try to connect for before continuing
-    bool res;
-
-    res = wm.autoConnect("MrClock_v1","mrclockv1"); // password protected ap
+    wm.setConfigPortalTimeout(5); // unfortunately I had to add this row. I can't get saved credentials from WiFiManager
+    //if(wm.getWiFiIsSaved()==true){} not working:-(
+    bool res = wm.autoConnect(); //connect to WiFi via WiFiManager
+ 
     DBG(
         if(!res) {
             Serial.println("Failed to connect");
@@ -233,6 +237,12 @@ void setup()
             Serial.println("connected...");
         }
     )
+
+    /*
+    //remote upload firmware - not yet prepared
+    esp32FOTA.setManifestURL( manifest_url );
+    esp32FOTA.printConfig();
+    */
     tft.fillScreen(TFT_BLACK); //blank display content
 }
 
@@ -270,4 +280,12 @@ void loop()
         WiFi.reconnect(); //try to connect
         DBG(Serial.println("WiFi try to reconnect");)
     }
+    /*
+    //Automated upload firmware - NOT YET IMPLEMENTED
+    bool updatedNeeded = esp32FOTA.execHTTPcheck();
+    if (updatedNeeded)  {
+        DBG(Serial.println("New version of firmware!!!");)
+        esp32FOTA.execOTA();
+    }
+    */
 }

@@ -12,7 +12,7 @@
 #define BUTTON_1        35
 #define BUTTON_2        0
 
-#define DEBUG_SER //debug přes sériák
+//#define DEBUG_SER //debug přes sériák
 
 //spuštění debugu do sériáku
 #ifdef DEBUG_SER

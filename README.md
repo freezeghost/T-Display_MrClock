@@ -14,16 +14,16 @@ Small number in right bottom coner showing speed of MrClock
 
 clock are showing statuses of MRClock as follow:
 MrClock is available
-\textcolor{red}{RED} -  clock are STOPPED
-\textcolor{green}{GREEN} - clock is RUNNING
+RED -  clock are STOPPED
+GREEN - clock is RUNNING
 MrClock is not available
-\textcolor{grey}{GREY} -  previously was stopped
-\textcolor{orange}{ORANGE} - previously was running, shown time is calculated from previous speed
+GREY -  previously was stopped
+ORANGE - previously was running, shown time is calculated from previous speed
 
 Delay between MrClock is available and lost signal is setted at 20 sec due to time to time lost packets.
 
 For connection to SSID (WiFi) long press bottom button (>1000ms). Bottom mean, that buttons are on right side from display.
-How to connect is shown on display. After start of [WiFiManager](#https://github.com/tzapu/WiFiManager) you have 60sec for connection.
+How to connect is shown on display. After start of WiFiManager you have 60sec for connection.
 Then WiFiManager is automaticaly shutdown.
 With WiFimanager you can also delete stored credentials of setted WiFi.
 

@@ -47,7 +47,7 @@ int ver = 240331;
 
 //automated upload software
 esp32FOTA esp32FOTA("MrClock_v1", ver, false, true);
-const char* manifest_url = "https://github.com/freezeghost/T-Display_MrClock/FW/mrclockv1.json";
+const char* manifest_url = "https://github.com/freezeghost/T-Display_MrClock/blob/main/FW/mrclockv1.json";
 
 //! Long time delay, it is recommended to use shallow sleep, which can effectively reduce the current consumption
 void espDelay(int ms)

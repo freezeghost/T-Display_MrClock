@@ -43,13 +43,12 @@ int MrClock_status=1; //start with stopped clock
 
 int MrSpeedPrev = 1000; //previous setting of speed
 
-int ver = 240327;
+int ver = 240331;
 
 //automated upload software
-/*
 esp32FOTA esp32FOTA("MrClock_v1", ver, false, true);
-const char* manifest_url = "url to JSON";
-*/
+const char* manifest_url = "https://github.com/freezeghost/T-Display_MrClock/FW/mrclockv1.json";
+
 //! Long time delay, it is recommended to use shallow sleep, which can effectively reduce the current consumption
 void espDelay(int ms)
 {
@@ -238,11 +237,9 @@ void setup()
         }
     )
 
-    /*
-    //remote upload firmware - not yet prepared
+    //remote upload firmware
     esp32FOTA.setManifestURL( manifest_url );
     esp32FOTA.printConfig();
-    */
     tft.fillScreen(TFT_BLACK); //blank display content
 }
 
@@ -280,12 +277,18 @@ void loop()
         WiFi.reconnect(); //try to connect
         DBG(Serial.println("WiFi try to reconnect");)
     }
-    /*
-    //Automated upload firmware - NOT YET IMPLEMENTED
+
+    //Automated upload firmware
     bool updatedNeeded = esp32FOTA.execHTTPcheck();
     if (updatedNeeded)  {
         DBG(Serial.println("New version of firmware!!!");)
+        tft.setTextColor(TFT_RED, TFT_BLACK);
+        tft.setTextFont(4);
+        tft.setTextDatum(MC_DATUM);
+        tft.drawString("! UPGRADE !", tft.width()/2, (tft.height()/2)-16);
+        tft.setTextColor(TFT_YELLOW, TFT_BLACK);
+        tft.drawString("! FIRMWARE !", tft.width()/2, (tft.height()/2)+16);
         esp32FOTA.execOTA();
+        tft.fillScreen(TFT_BLACK);
     }
-    */
 }

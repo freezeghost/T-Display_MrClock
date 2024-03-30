@@ -13,12 +13,18 @@ streght of WiFi signal with showing disconection
 Small number in right bottom coner showing speed of MrClock
 
 clock are showing statuses of MRClock as follow:
-    MrClock is available
-        RED -  clock are STOPPED
-        GREEN - clock is RUNNING
-    MrClock is not available
-        GREY -  previously was stopped
-        ORANGE - previously was running, shown time is calculated from previous speed
+
+MrClock is available
+
+    RED -  clock are STOPPED
+
+    GREEN - clock is RUNNING
+
+MrClock is not available
+
+    GREY -  previously was stopped
+
+    ORANGE - previously was running, shown time is calculated from previous speed
 
 Delay between MrClock is available and lost signal is setted at 20 sec due to time to time lost packets.
 

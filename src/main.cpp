@@ -43,10 +43,10 @@ int MrClock_status=1; //start with stopped clock
 
 int MrSpeedPrev = 1000; //previous setting of speed
 
-int ver = 240331;
+int version = 240331;
 
 //automated upload software
-esp32FOTA esp32FOTA("MrClock_v1", ver, false, true);
+esp32FOTA esp32FOTA("MrClock_v1", version, false, true);
 const char* manifest_url = "https://github.com/freezeghost/T-Display_MrClock/blob/main/FW/mrclockv1.json";
 
 //! Long time delay, it is recommended to use shallow sleep, which can effectively reduce the current consumption
@@ -227,7 +227,7 @@ void setup()
     wm.setConfigPortalTimeout(5); // unfortunately I had to add this row. I can't get saved credentials from WiFiManager
     //if(wm.getWiFiIsSaved()==true){} not working:-(
     bool res = wm.autoConnect(); //connect to WiFi via WiFiManager
- 
+
     DBG(
         if(!res) {
             Serial.println("Failed to connect");

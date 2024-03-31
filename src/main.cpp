@@ -43,11 +43,12 @@ int MrClock_status=1; //start with stopped clock
 
 int MrSpeedPrev = 1000; //previous setting of speed
 
-int version = 240331;
+int version = 240401;
 
 //automated upload software
 esp32FOTA esp32FOTA("MrClock_v1", version, false, true);
-const char* manifest_url = "https://github.com/freezeghost/T-Display_MrClock/blob/main/FW/mrclockv1.json";
+const char* manifest_url = "https://raw.githubusercontent.com/freezeghost/T-Display_MrClock/main/FW/mrclockv1.json"; //correction of path to github repo for direct access
+
 
 //! Long time delay, it is recommended to use shallow sleep, which can effectively reduce the current consumption
 void espDelay(int ms)

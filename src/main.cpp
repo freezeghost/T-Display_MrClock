@@ -283,6 +283,7 @@ void loop()
     bool updatedNeeded = esp32FOTA.execHTTPcheck();
     if (updatedNeeded)  {
         DBG(Serial.println("New version of firmware!!!");)
+        tft.fillScreen(TFT_BLACK);
         tft.setTextColor(TFT_RED, TFT_BLACK);
         tft.setTextFont(4);
         tft.setTextDatum(MC_DATUM);

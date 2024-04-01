@@ -35,3 +35,13 @@ With WiFimanager you can also delete stored credentials of setted WiFi.
 
 3D file is made with DesignSpark Mechanical version 6.0.3. Software is provided for free of charge at RS-Componnets.
 Screws for closing I used woodscrew lenght 11mm dia 2.5mm
+
+Needed steps before compiling
+TFT_eSPI library
+in file User_Setup_Select.h
+
+comment this line
+#include <User_Setup.h>
+
+uncommenct this line for enable LILYGO T-Display settings
+#include <User_Setups/Setup25_TTGO_T_Display.h>

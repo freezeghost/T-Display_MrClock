@@ -25,15 +25,15 @@ bool multiStart = false;
 int ini, last;
 long TOdelay=20000; //when MrClock is stopped can be delay up to 15sec! When running usually is around 2sec
 
-char packetBuffer[650]; //buffer for recieve
+char packetBuffer[650]; //buffer for receive
 IPAddress multicastAddress(239,50,50,20); //multicast IP address of MRclock
 unsigned int multicastPort = 2000; //usual port for MRclock
-WiFiUDP udpClock; //recieve datagram from Mrclock
+WiFiUDP udpClock; //receive datagram from Mrclock
 
 void mPacket(){
   MrDBG(char buffer[40];)
 //*************************************************************************************************
-  //start recieving multicast packet
+  //start receiving multicast packet
   if (multiStart==false && WiFi.status() == WL_CONNECTED){
     udpClock.beginMulticast(multicastAddress, multicastPort); //multicast for MrClock
     multiStart = true; //indication that multicast is running
@@ -41,7 +41,7 @@ void mPacket(){
     MrDBG(Serial.println("Multicast running");)
   }
 //*************************************************************************************************
-  //recieve Packet only when multicast rec is activated
+  //receive Packet only when multicast rec is activated
   int packetSize=0;
   if (multiStart==true){
     packetSize = udpClock.parsePacket();

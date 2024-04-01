@@ -43,7 +43,9 @@ int MrClock_status=1; //start with stopped clock
 
 int MrSpeedPrev = 1000; //previous setting of speed
 
-int version = 240401;
+const char* version = "0.1.9";
+
+bool update = false; //marker for available update
 
 //automated upload software
 esp32FOTA esp32FOTA("MrClock_v1", version, false, true);
@@ -62,6 +64,17 @@ void espDelay(int ms)
 void btn_handler(Button2& btn) {
     switch (btn.getType()) {
         case single_click:
+            if(btn==btn1 && update == true){ //confirmation update
+                DBG(Serial.println("New version of firmware!!!");)
+                tft.fillScreen(TFT_BLACK);
+                tft.setTextColor(TFT_RED, TFT_BLACK);
+                tft.setTextFont(4);
+                tft.setTextDatum(MC_DATUM);
+                tft.drawString("! UPGRADING !", tft.width()/2, (tft.height()/2)-16);
+                tft.drawString("! FIRMWARE !", tft.width()/2, (tft.height()/2)+16);
+                esp32FOTA.execOTA();
+                tft.fillScreen(TFT_BLACK);
+            }
             /*
             Future use
             if(btn==btn1){}
@@ -252,11 +265,14 @@ void loop()
     tft.setTextSize(1);
     mPacket();
     MRclock(-4,0,mHH,mMM,MrClock_status);
+ 
     //draw bargraph with running seconds
     tft.drawSmoothRoundRect(0,85,3,3,239,15,TFT_BLUE,TFT_BLACK);
     int bar = mSS * 3.97;
     tft.fillSmoothRoundRect(1,86,bar,13,3,TFT_YELLOW,TFT_BLACK);
-    if(mSS==0){tft.fillSmoothRoundRect(1,86,238,13,3,TFT_BLACK,TFT_BLACK);}
+    tft.fillSmoothRoundRect(bar+1,86,238-bar,13,3,TFT_BLACK,TFT_BLACK);
+ 
+    //showing current game speed
     tft.setTextFont(4);
     tft.setTextSize(1);
     if(MrSpeedPrev!=MrSpeed){
@@ -267,6 +283,7 @@ void loop()
     if (MrSpeed!=0){
         tft.drawNumber(1000/MrSpeed,200,108); //MrSpeed is in miliseconds!
     }
+
     //Show RSSI
     rssiWiFi(5, 103, TFT_BLUE,3);
 
@@ -280,17 +297,12 @@ void loop()
     }
 
     //Automated upload firmware
-    bool updatedNeeded = esp32FOTA.execHTTPcheck();
-    if (updatedNeeded)  {
-        DBG(Serial.println("New version of firmware!!!");)
-        tft.fillScreen(TFT_BLACK);
-        tft.setTextColor(TFT_RED, TFT_BLACK);
+    update = esp32FOTA.execHTTPcheck();
+    if (update)  {
         tft.setTextFont(4);
-        tft.setTextDatum(MC_DATUM);
-        tft.drawString("! UPGRADE !", tft.width()/2, (tft.height()/2)-16);
-        tft.setTextColor(TFT_YELLOW, TFT_BLACK);
-        tft.drawString("! FIRMWARE !", tft.width()/2, (tft.height()/2)+16);
-        esp32FOTA.execOTA();
-        tft.fillScreen(TFT_BLACK);
+        tft.setTextSize(1);
+        tft.setTextDatum(TC_DATUM);
+        tft.setTextColor(TFT_RED, TFT_BLACK);
+        tft.drawString("! UPD !", tft.width()/2, 108);
     }
 }

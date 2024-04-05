@@ -1,3 +1,14 @@
+const char* version = "0.2.0"; //actual version of firmware
+
+
+#define T_DISPLAY //switch between T-Display and T-Display-S3
+
+#ifdef T_DISPLAY
+  #define TD
+#else
+  #define TDS
+#endif
+
 #ifndef TFT_DISPOFF
   #define TFT_DISPOFF 0x28
 #endif

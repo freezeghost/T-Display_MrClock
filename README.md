@@ -15,15 +15,11 @@ Small number in right bottom coner showing speed of MrClock
 clock are showing statuses of MRClock as follow:
 
 MrClock is available
-
     RED -  clock are STOPPED
-
     GREEN - clock is RUNNING
 
 MrClock is not available
-
     GREY -  previously was stopped
-
     ORANGE - previously was running, shown time is calculated from previous speed
 
 Delay between MrClock is available and lost signal is setted at 20 sec due to time to time lost packets.
@@ -31,17 +27,11 @@ Delay between MrClock is available and lost signal is setted at 20 sec due to ti
 For connection to SSID (WiFi) long press bottom button (>1000ms). Bottom mean, that buttons are on right side from display.
 How to connect is shown on display. After start of WiFiManager you have 60sec for connection.
 Then WiFiManager is automaticaly shutdown.
-With WiFimanager you can also delete stored credentials of setted WiFi.
+With WiFimanager you can also delete stored credentials of set WiFi.
+
+When on display is showen red ! UPD ! is ready new firmware version. For update press top button for install.
 
 3D file is made with DesignSpark Mechanical version 6.0.3. Software is provided for free of charge at RS-Componnets.
 Screws for closing I used woodscrew lenght 11mm dia 2.5mm
 
-Needed steps before compiling
-TFT_eSPI library
-in file User_Setup_Select.h
-
-comment this line
-#include <User_Setup.h>
-
-uncommenct this line for enable LILYGO T-Display settings
-#include <User_Setups/Setup25_TTGO_T_Display.h>
+I changed folder for library TFT_eSPI due to future posible switch between T-Display and T-Display-S3

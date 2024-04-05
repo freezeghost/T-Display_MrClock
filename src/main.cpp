@@ -43,14 +43,11 @@ int MrClock_status=1; //start with stopped clock
 
 int MrSpeedPrev = 1000; //previous setting of speed
 
-const char* version = "0.1.9";
-
 bool update = false; //marker for available update
 
 //automated upload software
 esp32FOTA esp32FOTA("MrClock_v1", version, false, true);
 const char* manifest_url = "https://raw.githubusercontent.com/freezeghost/T-Display_MrClock/main/FW/mrclockv1.json"; //correction of path to github repo for direct access
-
 
 //! Long time delay, it is recommended to use shallow sleep, which can effectively reduce the current consumption
 void espDelay(int ms)
@@ -125,12 +122,12 @@ void button_loop()
     btn2.loop();
 }
 
-//display strenght of WiFi
+//display strength of WiFi
 void rssiWiFi(uint16_t x0, uint16_t y0, uint16_t Color, uint16_t Size){
     if(Size<=0){
         Size=1;
     }
-    int rssi = WiFi.RSSI(); //get strenght RSSI
+    int rssi = WiFi.RSSI(); //get strength RSSI
     uint32_t wCross = TFT_BLACK;
     uint32_t wColor5 = 0x10A1;
     uint32_t wColor25 = 0x10A1;
@@ -138,7 +135,7 @@ void rssiWiFi(uint16_t x0, uint16_t y0, uint16_t Color, uint16_t Size){
     uint32_t wColor75 = 0x10A1;
     uint32_t wColor100 = 0x10A1;
     if (WiFi.status() == WL_CONNECTED){
-        //lowest strenght
+        //lowest strength
         wColor5 = Color;
         //25%
         if (rssi >=-74){wColor25 = Color;}
@@ -225,13 +222,13 @@ void setup()
     tft.setTextColor(TFT_YELLOW, TFT_BLACK);
     tft.drawString("MrClock display", tft.width()/2, (tft.height()/2)+16);
 
-    //interrupt for buttn 1
+    //interrupt for button 1
     btn1.setClickHandler(btn_handler);
     btn1.setLongClickTime(1000);
     btn1.setDoubleClickHandler(btn_handler);
     btn1.setLongClickHandler(btn_handler);
 
-    //interrupt for buttn 2
+    //interrupt for button 2
     btn2.setClickHandler(btn_handler);
     btn2.setLongClickTime(1000);
     btn2.setDoubleClickHandler(btn_handler);
@@ -265,13 +262,13 @@ void loop()
     tft.setTextSize(1);
     mPacket();
     MRclock(-4,0,mHH,mMM,MrClock_status);
- 
+
     //draw bargraph with running seconds
     tft.drawSmoothRoundRect(0,85,3,3,239,15,TFT_BLUE,TFT_BLACK);
     int bar = mSS * 3.97;
     tft.fillSmoothRoundRect(1,86,bar,13,3,TFT_YELLOW,TFT_BLACK);
     tft.fillSmoothRoundRect(bar+1,86,238-bar,13,3,TFT_BLACK,TFT_BLACK);
- 
+
     //showing current game speed
     tft.setTextFont(4);
     tft.setTextSize(1);
@@ -291,7 +288,7 @@ void loop()
 
     //reconnect WiFi
     if (wm.getWiFiIsSaved()==true && WiFi.status() !=3 && retry <= millis()){
-        retry = millis() + 2500; //try again within 2.5 sec
+        retry = millis() + 2484; //try again within 2.5 sec ;-P
         WiFi.reconnect(); //try to connect
         DBG(Serial.println("WiFi try to reconnect");)
     }

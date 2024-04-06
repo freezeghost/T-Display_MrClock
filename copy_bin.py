@@ -1,18 +1,25 @@
 Import("env")
 import os
+import shutil
 import json
 
 # copy and rename BIN file
 def copy_and_rename(src_path, dest_path, new_name):
     # new name the copied file
-    new_path = f"{dest_path}{new_name}"
+    new_path = f"{dest_path}firmware.bin"
+    new_name = f"{dest_path}{new_name}"
     try: # first try to delete file if exist
         os.remove(new_path)
+        os.remove(new_name)
     except:
         pass
-    try:
-        os.rename(src_path, new_path) # copy with new name
-        print("New bin was copied into: ", new_path)
+    try: # copy not move :-) firmware into new folder
+        shutil.copy(src_path, new_path)
+    except:
+        pass
+    try: # rename file
+        os.rename(new_path, new_name)
+        print("New bin was copied into: ", new_name)
     except OSError as e:
         print(f"Error: {e.strerror}")
 

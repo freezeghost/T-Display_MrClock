@@ -20,6 +20,7 @@ clock are showing statuses of MRClock as follow:
 RED  clock is STOPPED
 
 ![clock is STOPPED](images/clk_stopped.JPEG)
+
 GREEN clock is RUNNING
 
 ![clock is RUNNING](images/clk_running.JPEG)
@@ -29,6 +30,7 @@ GREEN clock is RUNNING
 GREY previously was stopped
 
 ![previously was stopped](images/clk_stopped_no_server.JPEG)
+
 ORANGE previously was running, shown time is calculated from previous speed
 
 ![previously was running](images/clk_running_no_server.JPEG)

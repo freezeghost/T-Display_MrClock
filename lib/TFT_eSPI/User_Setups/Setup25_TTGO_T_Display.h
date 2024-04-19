@@ -1,5 +1,6 @@
 // Setup for the TTGO T Display
 #define USER_SETUP_ID 25
+//#warning "Used Setup25_TTGO_T_Display.h"
 
 // See SetupX_Template.h for all options available
 

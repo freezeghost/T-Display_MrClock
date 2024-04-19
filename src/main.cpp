@@ -3,8 +3,6 @@
 
 #include "TFT_eSPI.h"
 
-#include <SPI.h>
-
 #include <WiFi.h>
 
 #include <FS.h>
@@ -23,8 +21,8 @@
 
 TFT_eSPI tft = TFT_eSPI();//Invoke custom library
 
-Button2 btn1(BUTTON_1);
-Button2 btn2(BUTTON_2);
+Button2 btn1(BUTTON_2); //Button2 is top one when connector is on right side
+Button2 btn2(BUTTON_1);
 
 Button2 btn;
 WiFiManager wm;
@@ -43,12 +41,19 @@ int MrClock_status=1; //start with stopped clock
 
 int MrSpeedPrev = 1000; //previous setting of speed
 
+// menu variables
+bool mnShow = false;
+
 bool update = false; //marker for available update
 
 //automated upload software
-esp32FOTA esp32FOTA("MrClock_v1", version, false, true);
-const char* manifest_url = "https://raw.githubusercontent.com/freezeghost/T-Display_MrClock/main/FW/mrclockv1.json"; //correction of path to github repo for direct access
-
+#ifdef TD
+    esp32FOTA esp32FOTA("MrClock_v1", version, false, true);
+    const char* manifest_url = "https://raw.githubusercontent.com/freezeghost/T-Display_MrClock/main/FW/mrclockv1.json"; //correction of path to github repo for direct access
+#else
+    esp32FOTA esp32FOTA("MrClock3_v1", version, false, true);
+    const char* manifest_url = "https://raw.githubusercontent.com/freezeghost/T-Display_MrClock/main/FW/mrclock3v1.json"; //correction of path to github repo for direct access
+#endif
 //! Long time delay, it is recommended to use shallow sleep, which can effectively reduce the current consumption
 void espDelay(int ms)
 {
@@ -61,7 +66,7 @@ void espDelay(int ms)
 void btn_handler(Button2& btn) {
     switch (btn.getType()) {
         case single_click:
-            if(btn==btn1 && update == true){ //confirmation update
+            if(btn == btn1 && update == true){ //confirmation update
                 DBG(Serial.println("New version of firmware!!!");)
                 tft.fillScreen(TFT_BLACK);
                 tft.setTextColor(TFT_RED, TFT_BLACK);
@@ -72,6 +77,20 @@ void btn_handler(Button2& btn) {
                 esp32FOTA.execOTA();
                 tft.fillScreen(TFT_BLACK);
             }
+            // menu show
+        /*
+            if(btn == btn1 && mnShow == false){
+                mnShow = true;
+                tft.fillScreen(TFT_BLACK);
+                tft.setTextColor(TFT_BLUE, TFT_BLACK);
+                tft.setTextFont(4);
+                tft.setTextDatum(MR_DATUM);
+                tft.drawString("Config AP", tft.width(), (tft.height()/2)-51);
+                tft.drawString("Mode client", tft.width(), tft.height()/2-16);
+                tft.drawString("About", tft.width(), tft.height()/2+16);
+                //tft.drawString("spare", tft.width(), (tft.height()/2)+51);
+            }
+        */
             /*
             Future use
             if(btn==btn1){}
@@ -93,7 +112,12 @@ void btn_handler(Button2& btn) {
             */
             break;
         case long_click:
-            if(btn==btn2){ //start WiFiManager config portal with timeout 60sec, when no one is connected, it will automatically exit
+            if(btn == btn1){
+                mnShow = false;
+                tft.fillScreen(TFT_BLACK);
+            }
+            //start WiFiManager config portal with timeout 60sec, when no one is connected, it will automatically exit
+            if(btn==btn2){
                 tft.fillScreen(TFT_BLACK);
                 tft.setTextColor(TFT_WHITE, TFT_BLACK);
                 tft.setTextFont(4);
@@ -122,7 +146,7 @@ void button_loop()
     btn2.loop();
 }
 
-//display strength of WiFi
+//display strength of WiFi - base height 10px, width 14px, actual size is multplicator
 void rssiWiFi(uint16_t x0, uint16_t y0, uint16_t Color, uint16_t Size){
     if(Size<=0){
         Size=1;
@@ -163,8 +187,7 @@ void rssiWiFi(uint16_t x0, uint16_t y0, uint16_t Color, uint16_t Size){
 //***************************************************************************************************************************************************
 //MRclock display time
 //xpos, ypos, hours, minutes, status 1 - STOPPED, 2 - RUNNING, 3 - RUNNING no connection with MrClock, 0 - STOPPED no connection with MrClock
-void MRclock(int xpos, int ypos, int hh, int mm, int stat){
-    tft.setTextDatum(TL_DATUM);
+void MRclock(int xpos, int ypos, int hh, int mm, int stat, int font){
     //display clock status
     uint16_t color = TFT_GREY1; //default is grey
     switch (stat) {
@@ -184,15 +207,21 @@ void MRclock(int xpos, int ypos, int hh, int mm, int stat){
         color = TFT_GREY1; //default color grey
         break;
     }
-     tft.setTextColor(color, TFT_BLACK);
+    tft.setTextColor(color, TFT_BLACK);
+    String sClock="";
     //Correction for hours include leading zero
-    if (hh < 10) xpos += tft.drawChar('0', xpos, ypos, 8);
-    xpos += tft.drawNumber(hh, xpos, ypos, 8);
-    xpos += tft.drawChar(':', xpos , ypos, 8);
+    if (hh < 10) {
+        sClock = "0";
+    }
+    sClock = sClock + hh + ":";
     //correction for minutes
     tft.setTextColor(color, TFT_BLACK);
-    if (mm < 10) xpos += tft.drawChar('0', xpos, ypos, 8);
-    tft.drawNumber(mm, xpos, ypos, 8);
+    if (mm < 10) {
+        sClock = sClock + "0";
+    }
+    sClock = sClock + mm;
+    tft.drawString(sClock, xpos, ypos, font);
+
 }
 //***************************************************************************************************************************************************
 
@@ -215,6 +244,10 @@ void setup()
     }
 
     //ini screen
+    tft.setTextFont(2);
+    tft.setTextDatum(TL_DATUM);
+    tft.setTextColor(TFT_BLUE, TFT_BLACK);
+    tft.drawString(version, 5, 5);
     tft.setTextColor(TFT_WHITE, TFT_BLACK);
     tft.setTextFont(4);
     tft.setTextDatum(MC_DATUM);
@@ -251,6 +284,9 @@ void setup()
     //remote upload firmware
     esp32FOTA.setManifestURL( manifest_url );
     esp32FOTA.printConfig();
+    DBG(Serial.println("Check if is available new firmware");)
+    //Show there is new firmware
+    update = esp32FOTA.execHTTPcheck();
     tft.fillScreen(TFT_BLACK); //blank display content
 }
 
@@ -259,30 +295,56 @@ void setup()
 //! ***********************************************************************************************
 void loop()
 {
-    tft.setTextSize(1);
     mPacket();
-    MRclock(-4,0,mHH,mMM,MrClock_status);
+    if (!mnShow){
 
-    //draw bargraph with running seconds
-    tft.drawSmoothRoundRect(0,85,3,3,239,15,TFT_BLUE,TFT_BLACK);
-    int bar = mSS * 3.97;
-    tft.fillSmoothRoundRect(1,86,bar,13,3,TFT_YELLOW,TFT_BLACK);
-    tft.fillSmoothRoundRect(bar+1,86,238-bar,13,3,TFT_BLACK,TFT_BLACK);
+        #ifdef TD
+            tft.setTextSize(1);
+            tft.setTextDatum(TL_DATUM);
+            MRclock(-4,0,mHH,mMM,MrClock_status,8);
+        #else //TDS3
+            tft.setTextSize(1);
+            tft.setTextDatum(MC_DATUM);
+            MRclock(tft.width()/2,(tft.height()-55)/2,mHH,mMM,MrClock_status,8);
+        #endif
 
-    //showing current game speed
-    tft.setTextFont(4);
-    tft.setTextSize(1);
-    if(MrSpeedPrev!=MrSpeed){
-        MrSpeedPrev=MrSpeed; //store current speed
-        tft.fillRect(200,100,40,35,TFT_BLACK); //delete previous value
+        //draw bargraph with running seconds
+        int yBar = tft.height()-49;
+        tft.drawSmoothRoundRect(0,yBar,3,3,tft.width()-1,15,TFT_BLUE,TFT_BLACK);
+        int bar = mSS * ((tft.width()-2)/60);
+        tft.fillSmoothRoundRect(1,yBar+1,bar,13,3,TFT_YELLOW,TFT_BLACK);
+        tft.fillSmoothRoundRect(bar+1,yBar+1,tft.width()-2-bar,13,3,TFT_BLACK,TFT_BLACK);
+
+        tft.setTextFont(4); //4 26x14 pixel should be 32??
+        tft.setTextSize(1);
+        tft.setTextDatum(TL_DATUM);
+
+        //Show RSSI
+        rssiWiFi(5, tft.height()-32, TFT_BLUE,3);
+
+        // Show mode C - client, S - server, A - stand alone
+        tft.setTextColor(TFT_GREY1,TFT_BLACK);
+        tft.drawString("C",60,tft.height()-24); //tft.width()-19
+
+        // show update info
+        if (update)  {
+            tft.setTextFont(4); //32 pixel
+            tft.setTextSize(1);
+            tft.setTextDatum(TC_DATUM);
+            tft.setTextColor(TFT_RED, TFT_BLACK);
+            tft.drawString("! UPD !", tft.width()/2, tft.height()-24);
+        }
+
+        //showing current game speed
+        if(MrSpeedPrev!=MrSpeed){
+            MrSpeedPrev=MrSpeed; //store current speed
+            tft.fillRect(tft.width()-40,tft.height()-30,20,30,TFT_BLACK); //delete previous value
+        }
+        tft.setTextColor(TFT_BLUE,TFT_BLACK);
+        if (MrSpeed!=0){
+            tft.drawNumber(1000/MrSpeed,tft.width()-40,tft.height()-24); //MrSpeed is in miliseconds!
+        }
     }
-    tft.setTextColor(TFT_BLUE);
-    if (MrSpeed!=0){
-        tft.drawNumber(1000/MrSpeed,200,108); //MrSpeed is in miliseconds!
-    }
-
-    //Show RSSI
-    rssiWiFi(5, 103, TFT_BLUE,3);
 
     button_loop();
 
@@ -292,14 +354,5 @@ void loop()
         WiFi.reconnect(); //try to connect
         DBG(Serial.println("WiFi try to reconnect");)
     }
-
-    //Automated upload firmware
-    update = esp32FOTA.execHTTPcheck();
-    if (update)  {
-        tft.setTextFont(4);
-        tft.setTextSize(1);
-        tft.setTextDatum(TC_DATUM);
-        tft.setTextColor(TFT_RED, TFT_BLACK);
-        tft.drawString("! UPD !", tft.width()/2, 108);
-    }
+    delay(50); //safe for ESP32
 }

@@ -1,6 +1,7 @@
 // ST7789 using 8-bit Parallel
 
 #define USER_SETUP_ID 206
+//#warning "used Setup206_LilyGo_T_Display_S3"
 
 #define ST7789_DRIVER
 #define INIT_SEQUENCE_3 // Using this initialisation sequence improves the display image

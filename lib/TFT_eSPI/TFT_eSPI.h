@@ -154,7 +154,7 @@
       #warning TFT_MISO set to -1
     #endif
   #endif
-#endif  
+#endif
 
 /***************************************************************************************
 **                         Section 4: Setup fonts

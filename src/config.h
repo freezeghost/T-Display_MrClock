@@ -1,13 +1,4 @@
-const char* version = "0.2.0"; //actual version of firmware
-
-
-#define T_DISPLAY //switch between T-Display and T-Display-S3
-
-#ifdef T_DISPLAY
-  #define TD
-#else
-  #define TDS
-#endif
+const char* version = "0.2.1"; //actual version of firmware
 
 #ifndef TFT_DISPOFF
   #define TFT_DISPOFF 0x28
@@ -20,10 +11,12 @@ const char* version = "0.2.0"; //actual version of firmware
 #define ADC_EN          14
 #define ADC_PIN         34
 
-#define BUTTON_1        35
-#define BUTTON_2        0
+#ifdef TD
+  #define BUTTON_2      35
+  #define BUTTON_1      0
+#endif
 
-//#define DEBUG_SER //debug over serial connection
+#define DEBUG_SER //debug over serial connection
 
 //start debug over serial port
 #ifdef DEBUG_SER

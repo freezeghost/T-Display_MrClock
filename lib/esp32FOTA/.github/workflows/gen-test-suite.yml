@@ -1,0 +1,376 @@
+# ************************ Dispatchable only workflow ************************
+# Copyleft (c+) tobozo <https://github.com/tobozo> 2022-09-15
+#
+# This workflow is for library maintainers willing to test their
+# changes on a private, local or public webserver.
+#
+# It can only be triggered manually from the actions tab.
+#
+# - Gen RSA && Fetches Root CA then populate spiffs/littlefs/progmem if applicable
+# - Builds binaries (+signed version when applicable) from test suite folder (examples/anyFS/test)
+# - Creates a JSON Manifest linking to every binary in the test suite
+# - Bundles the compiled binaries and the manifest into a zip archive
+# - Publishes the zip archive as an artifact downloadable from the actions tab
+#
+# A final publish method can eventually be used at the maintainer's discretion.
+# See the commented blocks at the end of this workflow, and uncomment/edit to
+# deploy the assets as gh-page, wiki or release.
+#
+
+name: Dispatchable build
+
+on:
+  workflow_dispatch:
+
+    inputs:
+
+      manifest_url:
+        description: '⚠️ Complete URL to JSON Manifest'
+        required: true
+        default: 'https://server/fota/firmware.json'
+        type: string
+
+      manifest_host:
+        description: '⚠️ Hostname (e.g. github.com)'
+        required: true
+        default: 'server'
+        type: string
+
+      manifest_port:
+        description: '⚠️ Port (e.g 80 or 443)'
+        required: true
+        default: '443'
+        type: string
+
+      manifest_bin_path:
+        description: '⚠️ Path (no trailing slash)'
+        required: true
+        default: '/path/to/binaries'
+        type: string
+
+      firmware_type:
+        description: 'Firmware Type'
+        default: 'esp32-fota-http'
+        required: true
+        type: string
+
+      board_fqbn:
+        description: 'Arduino FQBN'
+        required: true
+        default: 'esp32:esp32:esp32'
+        type: string
+
+      partition_scheme:
+        description: 'Partition scheme'
+        required: true
+        type: choice
+        options:
+        - default
+        - min_spiffs
+        - large_spiffs
+        default: 'default'
+
+      debug_level:
+        description: 'Core Debug Level'
+        required: true
+        type: choice
+        options:
+        - none
+        - error
+        - warning
+        - info
+        - debug
+        - verbose
+        default: 'none'
+
+jobs:
+
+  set_env:
+
+    name: "Set environment"
+    runs-on: ubuntu-latest
+    env:
+      cert_path: /home/runner/certs
+      work_path: /home/runner/work
+      test_path: examples/anyFS/test
+      data_path: examples/anyFS/data
+      artifact_path: /home/runner/builds
+      mkspiffs_esp32: ~/.arduino15/packages/esp32*/tools/mkspiffs/*/mkspiffs
+      mklittlefs_esp32: ~/.arduino15/packages/esp32*/tools/mklittlefs/*/mklittlefs
+      privkey_path: /home/runner/certs/priv_key.pem
+      spiffs_bin_path: /home/runner/builds/2.cert-in-spiffs.spiffs.bin
+      littlefs_bin_path: /home/runner/builds/4.cert-in-littlefs.littlefs.bin
+      spiffs_signed_bin_path: /home/runner/builds/spiffs.signed.bin
+      littlefs_signed_bin_path: /home/runner/builds/littlefs.signed.bin
+      firmware_json_path: /home/runner/builds/firmware.json
+      firmware_json_template_path: .github/templates/firmware.test-suite.json
+
+    outputs:
+      env: ${{steps.set-env.outputs.env}}
+    steps:
+    # Avoid multiline: flatten JSON
+    - id: set-env
+      run: |
+        content='${{ toJson(env) }}'    # convert env vars to json
+        content="${content//'%'/'%25'}" # escape percent entities
+        content="${content//$'\n'/''}"  # remove lf
+        content="${content//$'\r'/''}"  # remove cr
+        echo "env=${content}" >> $GITHUB_OUTPUT
+
+
+
+  gen_keys:
+
+    name: "Openssl: generate rsa key and fetch certificate"
+    runs-on: ubuntu-latest
+    needs: set_env
+    env: ${{fromJSON(needs.set_env.outputs.env)}}
+
+    steps:
+
+    - name: Generate rsa key and fetch certificate
+      run: |
+
+        pub_key_path=${{env.cert_path}}/rsa_key.pub
+        root_ca_path=${{env.cert_path}}/root_ca.pem
+        root_ca_h_path=${{env.cert_path}}/root_ca.h
+        pub_key_h_path=${{env.cert_path}}/pub_key.h
+
+        mkdir -p ${{env.cert_path}}
+
+        # ssl_host="${{inputs.manifest_host}}"
+        #root_ca_c_prefix="const char* root_ca =\\"
+        #pub_key_c_prefix="const char* pub_key =\\"
+        #c_suffix="\"\";"
+
+        root_ca_c_prefix="const char* root_ca = R\"MULTILINE("
+        pub_key_c_prefix="const char* pub_key = R\"MULTILINE("
+        c_suffix=")MULTILINE\";"
+
+        # Retrieve a copy of a certificate chain using openssl and split contents in "const char*" C/C++ declaration
+        openssl s_client -showcerts -connect ${{inputs.manifest_host}}:${{inputs.manifest_port}} </dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > $root_ca_path
+        echo $root_ca_c_prefix > $root_ca_h_path
+        cat $root_ca_path >> $root_ca_h_path
+        echo $c_suffix >> $root_ca_h_path
+
+        # Generate privkey for later signing and split contents in "const char*" C/C++ declaration
+        openssl genrsa -out ${{env.privkey_path}} 4096
+        openssl rsa -in ${{env.privkey_path}} -pubout > $pub_key_path
+        echo $pub_key_c_prefix > $pub_key_h_path
+        cat $pub_key_path >> $pub_key_h_path
+        echo $c_suffix >> $pub_key_h_path
+
+        cat $pub_key_path
+        cat $root_ca_path
+        cat $root_ca_h_path
+        cat $pub_key_h_path
+
+    - name: Upload RootCA/PubKey as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: Certs
+        path: |
+          ${{env.cert_path}}/**
+
+
+  matrix_build:
+
+    name: ${{ matrix.sketch }}
+    runs-on: ubuntu-latest
+    needs: [gen_keys,set_env]
+    env: ${{fromJSON(needs.set_env.outputs.env)}}
+
+    strategy:
+
+      matrix:
+
+        sketch:
+        - 1.1.nosecurity.ino
+        - 1.2.nosecurity.gz.ino
+        - 1.3.nosecurity.zz.ino
+        - 2.cert-in-spiffs.ino
+        - 3.cert-in-progmem.ino
+        - 4.cert-in-littlefs.ino
+        - 5.sig-in-progmem.ino
+        # insert more tests here
+        - 99.final-stage.ino
+
+    steps:
+
+    - name: Checkout Current
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+
+    - name: Retrieve RootCA/PubKey
+      uses: actions/download-artifact@v3
+      with:
+        name: Certs
+        path: ${{env.cert_path}}
+
+    # The '#define FOTA_URL' declaration will override the default fota_url in the test suite code
+    - name: Inject Manifest URL
+      run: |
+        full_ino_path=`find ${{env.work_path}}/ | grep "${{ matrix.sketch }}"`
+        echo -e "#define FOTA_URL \"${{inputs.manifest_url}}\"\n$(cat $full_ino_path)" > $full_ino_path
+
+    - name: Inject RootCA/PubKey if applicable
+      if: (inputs.manifest_port  == '443' || inputs.manifest_port  == '4433')
+      run: |
+        full_ino_path=`find ${{env.work_path}}/ | grep "${{ matrix.sketch }}"`
+        root_ca_c_path=`dirname $full_ino_path`/root_ca.h
+        pub_key_c_path=`dirname $full_ino_path`/pub_key.h
+        cp ${{env.cert_path}}/root_ca.h $root_ca_c_path
+        cp ${{env.cert_path}}/pub_key.h $pub_key_c_path
+
+    - name: Checkout esp32-flashz
+      uses: actions/checkout@v3
+      with:
+        repository: vortigont/esp32-flashz
+        ref: main
+        path: CustomflashZ # must contain string "Custom"
+
+    - name: Checkout ESP32-targz
+      uses: actions/checkout@v3
+      with:
+        repository: tobozo/ESP32-targz
+        ref: master
+        path: CustomESP32-targz # must contain string "Custom"
+
+
+    - name: Compile ${{ matrix.sketch }}
+      uses: ArminJo/arduino-test-compile@v3
+      with:
+        platform-url: https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_dev_index.json
+        arduino-board-fqbn: ${{inputs.board_fqbn}}:PartitionScheme=${{inputs.partition_scheme}},DebugLevel=${{inputs.debug_level}}
+        required-libraries: ArduinoJson
+        extra-arduino-lib-install-args: --no-deps
+        extra-arduino-cli-args: "--warnings default " # see https://github.com/ArminJo/arduino-test-compile/issues/28
+        sketch-names: ${{ matrix.sketch }}
+        set-build-path: true
+
+    - name: Sign and Save binaries
+      run: |
+        mkdir -p ${{env.artifact_path}}
+        full_ino_bin_path=`find ${{env.work_path}}/ | grep "build/${{ matrix.sketch }}.bin"`
+        openssl dgst -sign ${{env.privkey_path}} -keyform PEM -sha256 -out firmware.sign -binary $full_ino_bin_path
+        cat firmware.sign $full_ino_bin_path > $full_ino_bin_path.img
+        cp $full_ino_bin_path ${{env.artifact_path}}/${{ matrix.sketch }}.bin
+        cp $full_ino_bin_path.img ${{env.artifact_path}}/${{ matrix.sketch }}.signed.bin
+        gzip -c $full_ino_bin_path > ${{env.artifact_path}}/${{ matrix.sketch }}.bin.gz
+        pigz -9kzc $full_ino_bin_path > ${{env.artifact_path}}/${{ matrix.sketch }}.bin.zz
+
+
+    - name: Prepare data folder
+      if: (inputs.manifest_port  == '443' || inputs.manifest_port  == '4433')
+      run: |
+        # Copy certs to data folder
+        cp ${{env.cert_path}}/root_ca.pem ${{env.data_path}}/
+        cp ${{env.cert_path}}/rsa_key.pub ${{env.data_path}}/
+        # Copy certs to TestSuite folder
+        cp ${{env.cert_path}}/root_ca.pem ${{env.artifact_path}}/
+        cp ${{env.cert_path}}/rsa_key.pub ${{env.artifact_path}}/
+
+    - name: Create and sign filesystem images
+      run: |
+        # Provide partition name=>size translation
+        default_size=0x170000
+        large_spiffs_size=0x6F0000
+        min_spiffs_size=0x30000
+
+        echo "[DEBUG] mkspiffs: ${{env.mkspiffs_esp32}} / ${{env.spiffs_bin_path}} / ${{env.spiffs_signed_bin_path}}"
+        echo "[DEBUG] mklittlefs: ${{env.mklittlefs_esp32}} / ${{env.mklittlefs_bin_path}} / ${{env.mklittlefs_signed_bin_path}}"
+
+        # Create the partition binaries
+        ${{env.mkspiffs_esp32}} -c ${{env.data_path}} -p 256 -b 4096 -s $${{inputs.partition_scheme}}_size ${{env.spiffs_bin_path}}
+        ${{env.mklittlefs_esp32}} -c ${{env.data_path}} -p 256 -b 4096 -s $${{inputs.partition_scheme}}_size ${{env.littlefs_bin_path}}
+        # Create gzipped versions
+        gzip -c ${{env.littlefs_bin_path}} > ${{env.littlefs_bin_path}}.gz
+        gzip -c ${{env.spiffs_bin_path}} > ${{env.spiffs_bin_path}}.gz
+        # Create flashZ versions
+        pigz -9kzc ${{env.littlefs_bin_path}} > ${{env.littlefs_bin_path}}.zz
+        pigz -9kzc ${{env.spiffs_bin_path}} > ${{env.spiffs_bin_path}}.zz
+
+        # Sign partition binaries
+        openssl dgst -sign ${{env.privkey_path}} -keyform PEM -sha256 -out firmware.sign -binary ${{env.spiffs_bin_path}}
+        cat firmware.sign ${{env.spiffs_bin_path}} > ${{env.spiffs_signed_bin_path}}
+        openssl dgst -sign ${{env.privkey_path}} -keyform PEM -sha256 -out firmware.sign -binary ${{env.littlefs_bin_path}}
+        cat firmware.sign ${{env.littlefs_bin_path}} > ${{env.littlefs_signed_bin_path}}
+
+    - name: Update TestSuite artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: TestSuite
+        path: |
+          ${{env.artifact_path}}/**
+
+
+  post_build:
+
+    name: Gather Artefacts
+    runs-on: ubuntu-latest
+    # wait until matrix jobs are all finished
+    needs: [matrix_build,set_env]
+    env: ${{fromJSON(needs.set_env.outputs.env)}}
+
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+
+    - name: Polulate JSON Manifest
+      run: |
+        mkdir -p ${{env.artifact_path}}
+        mkdir -p ${{env.cert_path}}
+        cp ${{env.firmware_json_template_path}} ${{env.firmware_json_path}}
+        sed -i -e 's~FIRMWARE_TYPE~${{inputs.firmware_type}}~g' ${{env.firmware_json_path}}
+        sed -i -e 's~FIRMWARE_HOST~${{inputs.manifest_host}}~g' ${{env.firmware_json_path}}
+        sed -i -e 's~FIRMWARE_PORT~${{inputs.manifest_port}}~g' ${{env.firmware_json_path}}
+        sed -i -e 's~FIRMWARE_PATH~${{inputs.manifest_bin_path}}~g' ${{env.firmware_json_path}}
+        cat ${{env.firmware_json_path}}
+
+        # delete private key as it is no longer needed
+        # rm ${{env.privkey_path}}
+
+    - name: Update TestSuite artifacts with new JSON Manifest
+      uses: actions/upload-artifact@v3
+      with:
+        name: TestSuite
+        path: |
+          ${{env.artifact_path}}/**
+
+    - name: Delete Cert/Signature/Privkey artifact
+      uses: geekyeggo/delete-artifact@v2
+      with:
+        name: Certs
+
+    # Eventually enable one of those
+
+#
+#    - name: Deploy 🚀 artifacts as gh-pages
+#      uses: JamesIves/github-pages-deploy-action@v4
+#      with:
+#        branch: gh-pages # The branch the action should deploy to.
+#        folder: ${{env.artifact_path}}/ # The folder the action should deploy.
+
+
+#    /!\ This one requires a personal access token
+#    - name: Deploy 🚀 artifacts as Wiki assets
+#      uses: SwiftDocOrg/github-wiki-publish-action@v1
+#      with:
+#        path: |
+#          ${{env.artifact_path}}/**
+#      env:
+#        GH_PERSONAL_ACCESS_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+
+
+#    /!\ This one may require some tuning
+#    - name: Deploy 🚀 artifacts as Release
+#      uses: softprops/action-gh-release@v1
+#      if: startsWith(github.ref, 'refs/tags/')
+#      with:
+#        files: |
+#          ${{env.artifact_path}}/**
+

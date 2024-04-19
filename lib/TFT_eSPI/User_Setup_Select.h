@@ -15,7 +15,7 @@
 // Example User_Setup files are stored in the "User_Setups" folder. These can be used
 // unmodified or adapted for a particular hardware configuration.
 
-#ifndef USER_SETUP_LOADED //  Lets PlatformIO users define settings in
+//#ifndef USER_SETUP_LOADED //  Lets PlatformIO users define settings in
                           //  platformio.ini, see notes in "Tools" folder.
 
 ///////////////////////////////////////////////////////
@@ -23,6 +23,16 @@
 ///////////////////////////////////////////////////////
 
 // Only ONE line below should be uncommented to define your setup.  Add extra lines and files as needed.
+
+// Added choose which setting use
+#ifdef TD
+#include <User_Setups/Setup25_TTGO_T_Display.h>    // Setup file for ESP32 and TTGO T-Display ST7789V SPI bus TFT
+#endif
+
+#ifdef TDS3
+#include <User_Setups/Setup206_LilyGo_T_Display_S3.h>     // For the LilyGo T-Display S3 based ESP32S3 with ST7789 170 x 320 TFT
+#endif
+
 
 //#include <User_Setup.h>           // Default setup is root library folder
 
@@ -55,7 +65,9 @@
 //#include <User_Setups/Setup22_TTGO_T4_v1.3.h>      // Setup file for ESP32 and TTGO T4 version 1.3
 //#include <User_Setups/Setup23_TTGO_TM.h>           // Setup file for ESP32 and TTGO TM ST7789 SPI bus TFT
 //#include <User_Setups/Setup24_ST7789.h>            // Setup file for DSTIKE/ESP32/ESP8266 configured for ST7789 240 x 240
-#include <User_Setups/Setup25_TTGO_T_Display.h>    // Setup file for ESP32 and TTGO T-Display ST7789V SPI bus TFT
+
+//#include <User_Setups/Setup25_TTGO_T_Display.h>    // Setup file for ESP32 and TTGO T-Display ST7789V SPI bus TFT
+
 //#include <User_Setups/Setup26_TTGO_T_Wristband.h>  // Setup file for ESP32 and TTGO T-Wristband ST7735 SPI bus TFT
 
 //#include <User_Setups/Setup27_RPi_ST7796_ESP32.h>    // ESP32   RPi MHS-4.0 inch Display-B
@@ -124,13 +136,14 @@
 
 //#include <User_Setups/Setup202_SSD1351_128.h>      // Setup file for ESP32/ESP8266 based SSD1351 128x128 1.5inch OLED display
 
-//#include <User_Setups/Setup203_ST7789.h>     // Setup file for ESP32/ESP8266 based ST7789 240X280 1.69inch TFT 
+//#include <User_Setups/Setup203_ST7789.h>     // Setup file for ESP32/ESP8266 based ST7789 240X280 1.69inch TFT
 
-//#include <User_Setups/Setup204_ESP32_TouchDown.h>     // Setup file for the ESP32 TouchDown based on ILI9488 480 x 320 TFT 
+//#include <User_Setups/Setup204_ESP32_TouchDown.h>     // Setup file for the ESP32 TouchDown based on ILI9488 480 x 320 TFT
 
-//#include <User_Setups/Setup205_ESP32_TouchDown_S3.h>     // Setup file for the ESP32 TouchDown S3 based on ILI9488 480 x 320 TFT 
+//#include <User_Setups/Setup205_ESP32_TouchDown_S3.h>     // Setup file for the ESP32 TouchDown S3 based on ILI9488 480 x 320 TFT
 
 //#include <User_Setups/Setup206_LilyGo_T_Display_S3.h>     // For the LilyGo T-Display S3 based ESP32S3 with ST7789 170 x 320 TFT
+
 //#include <User_Setups/Setup207_LilyGo_T_HMI.h>            // For the LilyGo T-HMI S3 based ESP32S3 with ST7789 240 x 320 TFT
 //#include <User_Setups/Setup209_LilyGo_T_Dongle_S3.h>      // For the LilyGo T-Dongle S3 based ESP32 with ST7735 80 x 160 TFT
 //#include <User_Setups/Setup210_LilyGo_T_Embed_S3.h>         // For the LilyGo T-Embed S3 based ESP32S3 with ST7789 170 x 320 TFT
@@ -146,7 +159,6 @@
 
 //#include <User_Setups/SetupX_Template.h>     // Template file for a setup
 
-
 //#include <User_Setups/Dustin_ILI9488.h>          // Setup file for Dustin Watts PCB with ILI9488
 //#include <User_Setups/Dustin_ST7796.h>           // Setup file for Dustin Watts PCB with ST7796
 //#include <User_Setups/Dustin_ILI9488_Pico.h>     // Setup file for Dustin Watts Pico PCB with ST7796
@@ -157,7 +169,7 @@
 //#include <User_Setups/Dustin_ILI9341_ESP32.h>    // Setup file for Dustin Watts PCB with ILI9341
 //#include <User_Setups/ILI9225.h>
 
-#endif // USER_SETUP_LOADED
+//#endif // USER_SETUP_LOADED
 
 
 

@@ -1,0 +1,59 @@
+name: PlatformIO
+
+on:
+  push:
+    paths:
+    - '**.ino'
+    - '**.ini'
+    - '**.cpp'
+    - '**.hpp'
+    - '**.h'
+    - '**.c'
+    - '**platformio.yml'
+
+  pull_request:
+    branches:
+      - master
+
+  workflow_dispatch:
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 1
+      matrix:
+        python-version: [3.7]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -U platformio
+          platformio update
+      - name: Build test
+        run: |
+          pwd
+          ls
+          mkdir -p tests/test_http
+          mkdir -p tests/test_https
+          cp examples/HTTP/HTTP/HTTP.ino tests/test_http/main.cpp
+          cp examples/HTTP/HTTPS/HTTPS.ino tests/test_https/main.cpp
+          # globally install the esp32FOTA library from local folder, don't update the platformio.ini
+          pio lib install --no-save file://$(realpath ./)
+          pio run
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: arduino/arduino-lint-action@v1
+        with:
+          project-type: library
+          library-manager: false
+          recursive: true

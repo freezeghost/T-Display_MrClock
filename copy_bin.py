@@ -3,13 +3,28 @@ import os
 import shutil
 import json
 
+print("SELECTED BOARD FOR COMPILE: ", env.GetProjectOption("board"))
+
+brd=""
+
+if env.GetProjectOption("board") == "lilygo-t-display":
+    brd = "" # no additional character in files
+    env.Append(CPPDEFINES=[("TD")])
+else:
+    brd = "3" # when use T-Display-S3
+    env.Append(CPPDEFINES=[("TDS3")])
+
 # copy and rename BIN file
 def copy_and_rename(src_path, dest_path, new_name):
     # new name the copied file
     new_path = f"{dest_path}firmware.bin"
     new_name = f"{dest_path}{new_name}"
-    try: # first try to delete file if exist
+
+    try: # first try to delete source file if exist
         os.remove(new_path)
+    except:
+        pass
+    try: # first try to delete destination file if exist
         os.remove(new_name)
     except:
         pass
@@ -21,7 +36,7 @@ def copy_and_rename(src_path, dest_path, new_name):
         os.rename(new_path, new_name)
         print("New bin was copied into: ", new_name)
     except OSError as e:
-        print(f"Error: {e.strerror}")
+        print(f"Error rename: {e.strerror}")
 
 # copy BIN to new upload folder, change version in json for esp32FOTA
 def post_bin_create(source, target, env):
@@ -32,7 +47,7 @@ def post_bin_create(source, target, env):
 
     if index != -1:
         upload_folder = program_path[:index] + "\\" + pathFW + "\\"
-        copy_and_rename(program_path,upload_folder,"tdisplay.bin")
+        copy_and_rename(program_path,upload_folder,"tdisplay" + brd + ".bin")
     else:
         print("Substring '\\.' not found in the text.")
         quit()
@@ -56,14 +71,14 @@ def post_bin_create(source, target, env):
 
     # upgrade JSON file
     # Load the JSON file
-    with open(upload_folder + 'mrclockv1.json', 'r') as file:
+    with open(upload_folder + 'mrclock' + brd + 'v1.json', 'r') as file:
         data = json.load(file)
 
     # Modify the value associated with the key "version"
     data["version"] = vVersion
 
     # Write the modified dictionary back to the JSON file
-    with open(upload_folder + 'mrclockv1.json', 'w') as file:
+    with open(upload_folder + 'mrclock' + brd + 'v1.json', 'w') as file:
         json.dump(data, file, indent=4)
     print("Actual version in json:", vVersion)
 

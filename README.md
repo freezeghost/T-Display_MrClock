@@ -1,7 +1,7 @@
 # T-Display_MrClock
 
 MrClock game watches running on LILYGO T-Display and T-Display-S3.
-![](image/TD_vs_TDS3.jpeg)
+![Comparision between T-DISPLAY and T-DISPLAY-S3 in enclosure](images/TD_vs_TDS3.jpeg)
 
 Whole project is provided for free and personal use only. Not for commercial use!
 
@@ -15,19 +15,19 @@ Small number in right bottom coner showing speed of MrClock
 
 clock are showing statuses of MRClock as follow:
 
-|  MrClock is available                                                     |
-|---------------------------------------------------------------------------|
-| RED  | clock are STOPPED                                                  |
-|![](image/clk_stopped.JPEG)												|
-|GREEN | clock is RUNNING                                                   |
-|![](image/clk_running.JPEG)												|
-|---------------------------------------------------------------------------|
-|  MrClock is not available                                                 |
-|---------------------------------------------------------------------------|
-| GREY |previously was stopped                                              |
-|![](image/clk_stopped_no_server.JPEG)												|
-|ORANGE|previously was running, shown time is calculated from previous speed|
-|![](image/clk_running_no_server.JPEG)												|
+## MrClock is available
+
+RED  clock is STOPPED
+![clock is STOPPED](images/clk_stopped.JPEG)
+GREEN clock is RUNNING
+![clock is RUNNING](images/clk_running.JPEG)
+
+## MrClock is not available
+
+GREY previously was stopped
+![previously was stopped](images/clk_stopped_no_server.JPEG)
+ORANGE previously was running, shown time is calculated from previous speed
+![previously was running](images/clk_running_no_server.JPEG)
 
 Delay between MrClock is available and lost signal is setted at 20 sec due to time to time lost packets.
 

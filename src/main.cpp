@@ -1,3 +1,12 @@
+/*
+For change between T-DISPLAY and T-DISPLAY-S3
+Use platformio.ini
+
+for open of menu press top button
+    move cursor to next menu item press top button
+    choose menu press bottom button
+    when confirmation is required long press bottom button at least 2 sec!
+*/
 #include "config.h"
 #include <Arduino.h>
 
@@ -43,6 +52,8 @@ int MrSpeedPrev = 1000; //previous setting of speed
 
 // menu variables
 bool mnShow = false;
+int mnu = 0; //Menu level - 0 is base menu
+String sMnu[10] ;
 
 bool update = false; //marker for available update
 
@@ -61,7 +72,19 @@ void espDelay(int ms)
     esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH,ESP_PD_OPTION_ON);
     esp_light_sleep_start();
 }
-
+// Menu control and display
+void ShowMenu(int Menu){
+    switch (Menu)
+    {
+    case 0: //Main menu
+        /* code */
+        break;
+    case 1:
+        break;
+    default:
+        break;
+    }
+}
 //Controll buttons
 void btn_handler(Button2& btn) {
     switch (btn.getType()) {
@@ -93,7 +116,6 @@ void btn_handler(Button2& btn) {
         */
             /*
             Future use
-            if(btn==btn1){}
             if(btn==btn2){}
             */
             break;
@@ -257,13 +279,13 @@ void setup()
 
     //interrupt for button 1
     btn1.setClickHandler(btn_handler);
-    btn1.setLongClickTime(1000);
+    btn1.setLongClickTime(1500);
     btn1.setDoubleClickHandler(btn_handler);
     btn1.setLongClickHandler(btn_handler);
 
     //interrupt for button 2
     btn2.setClickHandler(btn_handler);
-    btn2.setLongClickTime(1000);
+    btn2.setLongClickTime(1500);
     btn2.setDoubleClickHandler(btn_handler);
     btn2.setLongClickHandler(btn_handler);
 
@@ -295,9 +317,10 @@ void setup()
 //! ***********************************************************************************************
 void loop()
 {
+    button_loop();
     mPacket();
     if (!mnShow){
-
+        // Show game time
         #ifdef TD
             tft.setTextSize(1);
             tft.setTextDatum(TL_DATUM);
@@ -324,11 +347,11 @@ void loop()
 
         // Show mode C - client, S - server, A - stand alone
         tft.setTextColor(TFT_GREY1,TFT_BLACK);
-        tft.drawString("C",60,tft.height()-24); //tft.width()-19
+        tft.drawString("C",60,tft.height()-24);
 
         // show update info
         if (update)  {
-            tft.setTextFont(4); //32 pixel
+            tft.setTextFont(4);
             tft.setTextSize(1);
             tft.setTextDatum(TC_DATUM);
             tft.setTextColor(TFT_RED, TFT_BLACK);
@@ -345,8 +368,6 @@ void loop()
             tft.drawNumber(1000/MrSpeed,tft.width()-40,tft.height()-24); //MrSpeed is in miliseconds!
         }
     }
-
-    button_loop();
 
     //reconnect WiFi
     if (wm.getWiFiIsSaved()==true && WiFi.status() !=3 && retry <= millis()){

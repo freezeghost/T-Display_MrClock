@@ -1,0 +1,575 @@
+[0] 8Pin Matrix
+[1] Advanced LED Board-7
+[2] Agency FB
+[3] Agency FB tučné
+[4] Algerian
+[5] Arial
+[6] Arial Black obyčejné
+[7] Arial Bold
+[8] Arial Bold Italic
+[9] Arial Italic
+[10] Arial Narrow
+[11] Arial Narrow kurzíva
+[12] Arial Narrow tučné
+[13] Arial Narrow tučné kurzíva
+[14] Arial Rounded MT Bold
+[15] Arial Unicode MS
+[16] Arial kurzíva
+[17] Arial tučné
+[18] Arial tučné kurzíva
+[19] Atlanta Book
+[20] Atlanta Book Oblique
+[21] Atlanta Demi
+[22] Atlanta Demi Oblique
+[23] BR-OCRB
+[24] Bahnschrift
+[25] Bahnschrift Bold
+[26] Bahnschrift Bold Condensed
+[27] Bahnschrift Bold SemiCondensed
+[28] Bahnschrift Condensed
+[29] Bahnschrift Light
+[30] Bahnschrift Light Condensed
+[31] Bahnschrift Light SemiCondensed
+[32] Bahnschrift Regular
+[33] Bahnschrift SemiBold
+[34] Bahnschrift SemiBold Condensed
+[35] Bahnschrift SemiBold SemiCondensed
+[36] Bahnschrift SemiCondensed
+[37] Bahnschrift SemiLight
+[38] Bahnschrift SemiLight Condensed
+[39] Bahnschrift SemiLight SemiCondensed
+[40] Baskerville Old Face
+[41] Bauhaus 93
+[42] Belgium
+[43] Bell MT
+[44] Bell MT kurzíva
+[45] Bell MT tučné
+[46] Berlin Regular
+[47] Berlin Sans FB
+[48] Berlin Sans FB Demi tučné
+[49] Berlin Sans FB tučné
+[50] Bermuda Script
+[51] Bernard MT Condensed
+[52] Blackadder ITC
+[53] Bodoni MT
+[54] Bodoni MT Black
+[55] Bodoni MT Black kurzíva
+[56] Bodoni MT Condensed
+[57] Bodoni MT Condensed kurzíva
+[58] Bodoni MT Condensed tučné
+[59] Bodoni MT Condensed tučné kurzíva
+[60] Bodoni MT Poster Compressed
+[61] Bodoni MT kurzíva
+[62] Bodoni MT tučné
+[63] Bodoni MT tučné kurzíva
+[64] Book Antiqua
+[65] Book Antiqua kurzíva
+[66] Book Antiqua tučné
+[67] Book Antiqua tučné kurzíva
+[68] Bookman Old Style
+[69] Bookman Old Style kurzíva
+[70] Bookman Old Style tučné
+[71] Bookman Old Style tučné kurzíva
+[72] Bookshelf Symbol 7
+[73] Bradley Hand ITC
+[74] Britannic Bold
+[75] Broadway
+[76] Brougham
+[77] Brougham Bold
+[78] Brougham BoldOblique
+[79] Brougham Oblique
+[80] Brunei Bold
+[81] Brunei Regular
+[82] Brush Script MT kurzíva
+[83] Brussels Condensed Demi
+[84] Brussels Condensed Demi Italic
+[85] Brussels Condensed Light
+[86] Brussels Condensed Light Italic
+[87] Brussels Demi
+[88] Brussels Demi Italic
+[89] Brussels Light
+[90] Brussels Light Italic
+[91] Calgary MediumItalic
+[92] Calibri
+[93] Calibri Bold
+[94] Calibri Bold Italic
+[95] Calibri Italic
+[96] Calibri Light
+[97] Calibri Light Italic
+[98] Californian FB
+[99] Californian FB kurzíva
+[100] Californian FB tučné
+[101] Calisto MT
+[102] Calisto MT kurzíva
+[103] Calisto MT tučné
+[104] Calisto MT tučné kurzíva
+[105] Cambria
+[106] Cambria Bold
+[107] Cambria Bold Italic
+[108] Cambria Italic
+[109] Cambria Math
+[110] Candara
+[111] Candara Bold
+[112] Candara Bold Italic
+[113] Candara Italic
+[114] Candara Light
+[115] Candara Light Italic
+[116] Cascadia Code Bold
+[117] Cascadia Code ExtraLight
+[118] Cascadia Code Light
+[119] Cascadia Code Regular
+[120] Cascadia Code SemiBold
+[121] Cascadia Code SemiLight
+[122] Cascadia Mono Bold
+[123] Cascadia Mono ExtraLight
+[124] Cascadia Mono Light
+[125] Cascadia Mono Regular
+[126] Cascadia Mono SemiBold
+[127] Cascadia Mono SemiLight
+[128] Castellar
+[129] Centaur
+[130] Century
+[131] Century Gothic
+[132] Century Gothic kurzíva
+[133] Century Gothic tučné
+[134] Century Gothic tučné kurzíva
+[135] Century Schoolbook
+[136] Century Schoolbook kurzíva
+[137] Century Schoolbook tučné
+[138] Century Schoolbook tučné kurzíva
+[139] Chiller
+[140] Code 39-hoch-Logitogo
+[141] Colonna MT
+[142] Comic Sans MS
+[143] Comic Sans MS kurzíva
+[144] Comic Sans MS tučné
+[145] Comic Sans MS tučné kurzíva
+[146] Connecticut
+[147] Consolas
+[148] Consolas Bold
+[149] Consolas Bold Italic
+[150] Consolas Italic
+[151] Constantia
+[152] Constantia Bold
+[153] Constantia Bold Italic
+[154] Constantia Italic
+[155] Cooper Black
+[156] Copenhagen Bold
+[157] Copenhagen BoldItalic
+[158] Copenhagen Italic
+[159] Copenhagen Roman
+[160] Copperplate Gothic Bold
+[161] Copperplate Gothic Light
+[162] Corbel
+[163] Corbel Bold
+[164] Corbel Bold Italic
+[165] Corbel Italic
+[166] Corbel Light
+[167] Corbel Light Italic
+[168] Courier New
+[169] Courier New Bold
+[170] Courier New Bold Italic
+[171] Courier New Italic
+[172] Courier New kurzíva
+[173] Courier New tučné
+[174] Courier New tučné kurzíva
+[175] Curlz MT
+[176] Cyrillic
+[177] Cyrillic Bold
+[178] Dialog.bold
+[179] Dialog.bolditalic
+[180] Dialog.italic
+[181] Dialog.plain
+[182] DialogInput.bold
+[183] DialogInput.bolditalic
+[184] DialogInput.italic
+[185] DialogInput.plain
+[186] Droid Sans Fallback
+[187] Dubai Bold
+[188] Dubai Light
+[189] Dubai Medium
+[190] Dubai Regular
+[191] Ebrima
+[192] Ebrima tučné
+[193] Edwardian Script ITC
+[194] Elephant
+[195] Elephant kurzíva
+[196] Engravers MT
+[197] Eras Bold ITC
+[198] Eras Demi ITC
+[199] Eras Light ITC
+[200] Eras Medium ITC
+[201] Felix Titling
+[202] Footlight MT Light
+[203] Forte
+[204] Franklin Gothic Book
+[205] Franklin Gothic Book kurzíva
+[206] Franklin Gothic Demi
+[207] Franklin Gothic Demi Cond
+[208] Franklin Gothic Demi kurzíva
+[209] Franklin Gothic Heavy
+[210] Franklin Gothic Heavy kurzíva
+[211] Franklin Gothic Medium
+[212] Franklin Gothic Medium Cond
+[213] Franklin Gothic Medium kurzíva
+[214] Freestyle Script
+[215] French Script MT
+[216] Gabriola
+[217] Gadugi
+[218] Gadugi Bold
+[219] Garamond
+[220] Garamond kurzíva
+[221] Garamond tučné
+[222] Georgia
+[223] Georgia kurzíva
+[224] Georgia tučné
+[225] Georgia tučné kurzíva
+[226] Germany
+[227] Gigi
+[228] Gill Sans MT
+[229] Gill Sans MT Condensed
+[230] Gill Sans MT Ext Condensed Bold
+[231] Gill Sans MT kurzíva
+[232] Gill Sans MT tučné
+[233] Gill Sans MT tučné kurzíva
+[234] Gill Sans Ultra Bold
+[235] Gill Sans Ultra Bold Condensed
+[236] Gloucester MT Extra Condensed
+[237] Goudy Old Style
+[238] Goudy Old Style kurzíva
+[239] Goudy Old Style tučné
+[240] Goudy Stout
+[241] Guatemala Antique
+[242] Guatemala Bold
+[243] Guatemala BoldItalic
+[244] Guatemala Italic
+[245] HP Simplified
+[246] HP Simplified Bold
+[247] HP Simplified Bold Italic
+[248] HP Simplified Hans Light
+[249] HP Simplified Hans Regular
+[250] HP Simplified Italic
+[251] HP Simplified Jpan Light
+[252] HP Simplified Jpan Regular
+[253] HP Simplified Light
+[254] HP Simplified Light Italic
+[255] Haettenschweiler
+[256] Harlow Solid Italic
+[257] Harrington
+[258] Helsinki Bold
+[259] Helsinki Bold Oblique
+[260] Helsinki Narrow
+[261] Helsinki Narrow Bold
+[262] Helsinki Narrow Bold Oblique
+[263] Helsinki Narrow Oblique
+[264] Helsinki Oblique
+[265] Helsinki Regular
+[266] High Tower Text
+[267] High Tower Text kurzíva
+[268] HoloLens MDL2 Assets
+[269] Impact
+[270] Imprint MT Shadow
+[271] Inconsolata
+[272] Inconsolata Bold
+[273] Informal Roman
+[274] Ink Free
+[275] Istanbul
+[276] Javanese Text
+[277] Jokerman
+[278] Juice ITC
+[279] Kristen ITC
+[280] Kunstler Script
+[281] Leelawadee
+[282] Leelawadee UI
+[283] Leelawadee UI Semilight obyčejné
+[284] Leelawadee UI tučné
+[285] Leelawadee tučné
+[286] Letter Gothic
+[287] Letter Gothic Bold
+[288] Letter Gothic Oblique
+[289] Lucida Bright
+[290] Lucida Bright Demibold
+[291] Lucida Bright Demibold Italic
+[292] Lucida Bright Italic
+[293] Lucida Calligraphy Italic
+[294] Lucida Console
+[295] Lucida Fax Demibold
+[296] Lucida Fax Demibold Italic
+[297] Lucida Fax Italic
+[298] Lucida Fax Regular
+[299] Lucida Handwriting Italic
+[300] Lucida Sans Demibold Italic
+[301] Lucida Sans Demibold Roman
+[302] Lucida Sans Italic
+[303] Lucida Sans Regular
+[304] Lucida Sans Typewriter Bold
+[305] Lucida Sans Typewriter Bold Oblique
+[306] Lucida Sans Typewriter Oblique
+[307] Lucida Sans Typewriter Regular
+[308] Lucida Sans Unicode
+[309] MS Gothic
+[310] MS Outlook
+[311] MS PGothic
+[312] MS Reference Sans Serif
+[313] MS Reference Specialty
+[314] MS UI Gothic
+[315] MT Extra
+[316] MV Boli
+[317] Magneto tučné
+[318] Maiandra GD
+[319] Malgun Gothic
+[320] Malgun Gothic Bold
+[321] Malgun Gothic Semilight
+[322] Marlett
+[323] Matura MT Script Capitals
+[324] Microsoft Himalaya
+[325] Microsoft JhengHei
+[326] Microsoft JhengHei Light
+[327] Microsoft JhengHei UI
+[328] Microsoft JhengHei UI Light
+[329] Microsoft JhengHei UI tučné
+[330] Microsoft JhengHei tučné
+[331] Microsoft New Tai Lue
+[332] Microsoft New Tai Lue Bold
+[333] Microsoft PhagsPa
+[334] Microsoft PhagsPa Bold
+[335] Microsoft Sans Serif
+[336] Microsoft Tai Le
+[337] Microsoft Tai Le Bold
+[338] Microsoft Uighur
+[339] Microsoft Uighur tučné
+[340] Microsoft YaHei
+[341] Microsoft YaHei Light
+[342] Microsoft YaHei UI
+[343] Microsoft YaHei UI Light
+[344] Microsoft YaHei UI tučné
+[345] Microsoft YaHei tučné
+[346] Microsoft Yi Baiti
+[347] MingLiU-ExtB
+[348] MingLiU_HKSCS-ExtB
+[349] Mistral
+[350] Modern No. 20
+[351] Mongolian Baiti
+[352] Monospaced.bold
+[353] Monospaced.bolditalic
+[354] Monospaced.italic
+[355] Monospaced.plain
+[356] Monotype Corsiva
+[357] Myanmar Text
+[358] Myanmar Text Bold
+[359] NSimSun
+[360] Niagara Engraved
+[361] Niagara Solid
+[362] Nirmala UI
+[363] Nirmala UI Semilight
+[364] Nirmala UI tučné
+[365] OCR A Extended
+[366] Oklahoma
+[367] Oklahoma Bold
+[368] Oklahoma BoldOblique
+[369] Oklahoma Oblique
+[370] Old English Text MT
+[371] Onyx
+[372] PMingLiU-ExtB
+[373] PT Dingbats 1
+[374] PT Dingbats 2
+[375] PT Dingbats 3
+[376] PT Dingbats 4
+[377] PT Symbol 1 
+[378] PT Symbol 2 
+[379] PT Utah Condensed
+[380] PT Utah Condensed Bold
+[381] PT Utah Condensed Bold Oblique
+[382] PT Utah Condensed Oblique
+[383] Palace Script MT
+[384] Palatino Linotype
+[385] Palatino Linotype kurzíva
+[386] Palatino Linotype tučné
+[387] Palatino Linotype tučné kurzíva
+[388] Papyrus
+[389] Parchment
+[390] Perpetua
+[391] Perpetua Titling MT Light
+[392] Perpetua Titling MT tučné
+[393] Perpetua kurzíva
+[394] Perpetua tučné
+[395] Perpetua tučné kurzíva
+[396] Playbill
+[397] Poor Richard
+[398] Portugal Bold
+[399] Portugal BoldItalic
+[400] Portugal Italic
+[401] Portugal Roman
+[402] Pristina
+[403] Rage Italic
+[404] Ravie
+[405] Rockwell
+[406] Rockwell Condensed
+[407] Rockwell Condensed tučné
+[408] Rockwell Extra Bold
+[409] Rockwell kurzíva
+[410] Rockwell tučné
+[411] Rockwell tučné kurzíva
+[412] San Diego
+[413] SansSerif.bold
+[414] SansSerif.bolditalic
+[415] SansSerif.italic
+[416] SansSerif.plain
+[417] Script MT Bold
+[418] Segoe MDL2 Assets
+[419] Segoe Print
+[420] Segoe Print Bold
+[421] Segoe Script
+[422] Segoe Script Bold
+[423] Segoe UI
+[424] Segoe UI Black
+[425] Segoe UI Black Italic
+[426] Segoe UI Emoji
+[427] Segoe UI Historic
+[428] Segoe UI Kurzíva
+[429] Segoe UI Light
+[430] Segoe UI Light Italic
+[431] Segoe UI Semibold
+[432] Segoe UI Semibold Italic
+[433] Segoe UI Semilight
+[434] Segoe UI Semilight Italic
+[435] Segoe UI Symbol
+[436] Segoe UI Tučné
+[437] Segoe UI Tučné Kurzíva
+[438] Serif.bold
+[439] Serif.bolditalic
+[440] Serif.italic
+[441] Serif.plain
+[442] Seven Segment Regular
+[443] Showcard Gothic
+[444] Siemens AD Sans Regular
+[445] Siemens Logo
+[446] Siemens Sans
+[447] Siemens Sans Black
+[448] Siemens Sans Black Italic
+[449] Siemens Sans Bold
+[450] Siemens Sans Bold Italic
+[451] Siemens Sans Italic
+[452] Siemens Sans SC
+[453] Siemens Sans SC Black
+[454] Siemens Sans SC Black Italic
+[455] Siemens Sans SC Bold
+[456] Siemens Sans SC Bold Italic
+[457] Siemens Sans SC Italic
+[458] Siemens Serif
+[459] Siemens Serif Bold
+[460] Siemens Serif Bold Italic
+[461] Siemens Serif Italic
+[462] Siemens Serif SC
+[463] Siemens Serif SC Bold
+[464] Siemens Serif SC Bold Italic
+[465] Siemens Serif SC Italic
+[466] Siemens Serif SC Semi
+[467] Siemens Serif SC Semi Bold
+[468] Siemens Serif SC Semi Bold Italic
+[469] Siemens Serif SC Semi Italic
+[470] Siemens Serif Semibold
+[471] Siemens Serif Semibold Bold
+[472] Siemens Serif Semibold Bold Italic
+[473] Siemens Serif Semibold Italic
+[474] Siemens Slab
+[475] Siemens Slab Black
+[476] Siemens Slab Black Italic
+[477] Siemens Slab Bold
+[478] Siemens Slab Bold Italic
+[479] Siemens Slab Italic
+[480] Siemens Slab SC
+[481] Siemens Slab SC Black
+[482] Siemens Slab SC Black Italic
+[483] Siemens Slab SC Bold
+[484] Siemens Slab SC Bold Italic
+[485] Siemens Slab SC Italic
+[486] Siemens TIA Portal Basic
+[487] Siemens TIA Portal Basic Bold
+[488] SimSun
+[489] SimSun-ExtB
+[490] Sitka Banner
+[491] Sitka Banner Bold
+[492] Sitka Banner Bold Italic
+[493] Sitka Banner Italic
+[494] Sitka Display
+[495] Sitka Display Bold
+[496] Sitka Display Bold Italic
+[497] Sitka Display Italic
+[498] Sitka Heading
+[499] Sitka Heading Bold
+[500] Sitka Heading Bold Italic
+[501] Sitka Heading Italic
+[502] Sitka Small
+[503] Sitka Small Bold
+[504] Sitka Small Bold Italic
+[505] Sitka Small Italic
+[506] Sitka Subheading
+[507] Sitka Subheading Bold
+[508] Sitka Subheading Bold Italic
+[509] Sitka Subheading Italic
+[510] Sitka Text
+[511] Sitka Text Bold
+[512] Sitka Text Bold Italic
+[513] Sitka Text Italic
+[514] Snap ITC
+[515] SpaceClaim ASME CB
+[516] SpaceClaim ISO CB
+[517] Stencil
+[518] Sylfaen
+[519] Symbol
+[520] Tahoma
+[521] Tahoma tučné
+[522] Tempus Sans ITC
+[523] Times New Roman
+[524] Times New Roman Bold
+[525] Times New Roman Bold Italic
+[526] Times New Roman Italic
+[527] Times New Roman kurzíva
+[528] Times New Roman tučné
+[529] Times New Roman tučné kurzíva
+[530] Trebuchet MS
+[531] Trebuchet MS kurzíva
+[532] Trebuchet MS tučné
+[533] Trebuchet MS tučné kurzíva
+[534] Tw Cen MT
+[535] Tw Cen MT Condensed
+[536] Tw Cen MT Condensed Extra Bold
+[537] Tw Cen MT Condensed tučné
+[538] Tw Cen MT kurzíva
+[539] Tw Cen MT tučné
+[540] Tw Cen MT tučné kurzíva
+[541] US Roman
+[542] Utah
+[543] Utah Bold
+[544] Utah Bold Oblique
+[545] Utah Oblique
+[546] Verdana
+[547] Verdana kurzíva
+[548] Verdana tučné
+[549] Verdana tučné kurzíva
+[550] Viner Hand ITC
+[551] Vivaldi kurzíva
+[552] Vladimir Script
+[553] Webdings
+[554] Weintek MT500 16p
+[555] Weintek MT500 24p
+[556] Weintek MT500 8p
+[557] Wide Latin
+[558] WinCC_flexible
+[559] WinCC_flexible_high
+[560] WinCC_flexible_smart
+[561] Wingdings
+[562] Wingdings 2
+[563] Wingdings 3
+[564] XOUMEG S57 Condensed Regular
+[565] Yu Gothic Bold
+[566] Yu Gothic Light
+[567] Yu Gothic Medium
+[568] Yu Gothic Regular
+[569] Yu Gothic UI Bold
+[570] Yu Gothic UI Light
+[571] Yu Gothic UI Regular
+[572] Yu Gothic UI Semibold
+[573] Yu Gothic UI Semilight
+[574] 长仿宋体

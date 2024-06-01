@@ -12,7 +12,7 @@ receiving of packets, usually it is aprox 2 sec, but time to time packet is lost
 can be up to 15 sec.
 Last row in display shows few statuses:
 strength of WiFi signal with showing disconection
-mode C - client, S - server, A - stand alone. At the moment is only C - client
+mode C - client, S - server, A - stand alone (shown only when WiFi is off and clock mode in server mode).
 In long gap can be diplayed red "! UPD !" - signaling availability of firmware update here at github.
 Small number in right bottom coner showing speed of MrClock / timekeeper in fact fastspeed clock.
 
@@ -40,7 +40,24 @@ ORANGE previously was running, shown time is calculated from previous speed
 
 Delay between MrClock is available and lost signal is setted at 20 sec due to time to time lost packets.
 
-For connection to SSID (WiFi) long press bottom button (>1000ms). Bottom mean, that buttons are on right side from display.
+Since version 0.3.0 is available menu for access to menu press top button
+Move up and down use both button :-)
+Enter to setting long press top button (>700ms)
+For acknowledge also long press top button
+During changing of value are buttons swapped. I have it in ToDo:-)
+Structure of menu:
+    -Clock client/server
+    -WiFi Client/Hotspot/off
+    -Settings-
+        -Start setting AP (for setting of SSID through WiFiManager)
+        -Time (available only at clkock server mode)
+        -Speed (available only at clkock server mode)
+        << Back
+    -About
+    -UPGRADE (available only when is ready new Upgrade on github, long press top button)
+    -Exit
+
+For connection to SSID (WiFi) use menu access.
 How to connect is shown on display. After start of WiFiManager you have 60sec for connection.
 Then WiFiManager is automaticaly shutdown.
 With WiFimanager you can also delete stored credentials of set WiFi.

@@ -3,12 +3,13 @@ For change between T-DISPLAY and T-DISPLAY-S3
 Use platformio.ini
 
 for open of menu press top button
-    move cursor to next menu item press top button
-    choose menu press bottom button
-    when confirmation is required long press bottom button at least 2 sec!
 */
 #include "config.h"
 #include <Arduino.h>
+#include <EEPROM.h>
+
+//#include <cstring>
+//#include <iostream>
 
 #include "TFT_eSPI.h"
 
@@ -24,38 +25,32 @@ for open of menu press top button
 
 #include <WiFiManager.h> // https://github.com/tzapu/WiFiManager
 
-#define TFT_GREEN1  0x07E6
-#define TFT_ORANGE1 0xFBE0
-#define TFT_GREY1   0x39C4
-
 TFT_eSPI tft = TFT_eSPI();//Invoke custom library
 
-Button2 btn1(BUTTON_2); //Button2 is top one when connector is on right side
-Button2 btn2(BUTTON_1);
-
+Button2 btnUp(BUTTON_2); // Initialize the up button
+Button2 btnDwn(BUTTON_1); // Initialize the down button
 Button2 btn;
+
 WiFiManager wm;
 
-char buff[512];
-long retry=0;
+char hostname[23];
+byte modeWiFi = 0; //WiFi mode 0-client; 1-server; 2-OFF stored in EEPROM 0
+long retry=0; //retry time for testing reconnect to WiFi
+bool update = false; //marker for available update
+//TODO
+byte lang = 0;  //Language 0-English; 1-Czech; 2-German stored in EEPROM 1
 
 //MrClock variables
 long MrClock_TimeOut; //speed of MrClock for offline calculation - display
 long mrClk_TimeOut;  //delay of incoming packet from MrClock server
-int mHH;
-int mMM;
+int mHH;    //Stored in EEPROM 4
+int mMM;    //Stored in EEPROM 5
 int mSS;
 int MrSpeed=1000; //speed of MrClock in ms
-int MrClock_status=1; //start with stopped clock
-
 int MrSpeedPrev = 1000; //previous setting of speed
-
-// menu variables
-bool mnShow = false;
-int mnu = 0; //Menu level - 0 is base menu
-String sMnu[10] ;
-
-bool update = false; //marker for available update
+byte MrClock_status=1; //start with stopped clock
+byte clockMode = 0;     //clock mode 0-client; 1-server stored in EEPROM 2
+byte mrSetSpeed = 1;    //clock speed stored in server mode in EEPROM 3
 
 //automated upload software
 #ifdef TD
@@ -72,89 +67,35 @@ void espDelay(int ms)
     esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH,ESP_PD_OPTION_ON);
     esp_light_sleep_start();
 }
-// Menu control and display
-void ShowMenu(int Menu){
-    switch (Menu)
-    {
-    case 0: //Main menu
-        /* code */
-        break;
-    case 1:
-        break;
-    default:
-        break;
-    }
-}
-//Controll buttons
+
+#include <uiMenu.h>
+
+//Control buttons
 void btn_handler(Button2& btn) {
     switch (btn.getType()) {
         case single_click:
-            if(btn == btn1 && update == true){ //confirmation update
-                DBG(Serial.println("New version of firmware!!!");)
-                tft.fillScreen(TFT_BLACK);
-                tft.setTextColor(TFT_RED, TFT_BLACK);
-                tft.setTextFont(4);
-                tft.setTextDatum(MC_DATUM);
-                tft.drawString("! UPGRADING !", tft.width()/2, (tft.height()/2)-16);
-                tft.drawString("! FIRMWARE !", tft.width()/2, (tft.height()/2)+16);
-                esp32FOTA.execOTA();
-                tft.fillScreen(TFT_BLACK);
+            if(btn == btnUp){nav.doNav(downCmd);}   // It's called downCmd because it decreases the index of an array. Visually that would mean the selector goes upwards.
+            if(btn == btnDwn){
+                if (nav.sleepTask){
+                    if(clockMode == 1){ //clock server mode
+                        if(MrClock_status<=1){
+                            MrClock_status=2; //start clock
+                        }else{
+                            MrClock_status=1; //stop clock
+                        }
+                    }
+                }else{ //when menu is up
+                    nav.doNav(upCmd); // It's called upCmd because it increases the index of an array. Visually that would mean the selector goes downwards.
+                }
             }
-            // menu show
-        /*
-            if(btn == btn1 && mnShow == false){
-                mnShow = true;
-                tft.fillScreen(TFT_BLACK);
-                tft.setTextColor(TFT_BLUE, TFT_BLACK);
-                tft.setTextFont(4);
-                tft.setTextDatum(MR_DATUM);
-                tft.drawString("Config AP", tft.width(), (tft.height()/2)-51);
-                tft.drawString("Mode client", tft.width(), tft.height()/2-16);
-                tft.drawString("About", tft.width(), tft.height()/2+16);
-                //tft.drawString("spare", tft.width(), (tft.height()/2)+51);
-            }
-        */
-            /*
-            Future use
-            if(btn==btn2){}
-            */
-            break;
-        case double_click:
-            /*
-            Future use
-            if(btn==btn1){}
-            if(btn==btn2){}
-            */
-            break;
-        case triple_click:
-            /*
-            Future use
-            if(btn==btn1){}
-            if(btn==btn2){}
-            */
             break;
         case long_click:
-            if(btn == btn1){
-                mnShow = false;
-                tft.fillScreen(TFT_BLACK);
+            if(btn == btnUp){
+                if(nav.sleepTask){mrSetSpeed=1000/MrSpeed;}
+                nav.doNav(enterCmd);
             }
-            //start WiFiManager config portal with timeout 60sec, when no one is connected, it will automatically exit
-            if(btn==btn2){
-                tft.fillScreen(TFT_BLACK);
-                tft.setTextColor(TFT_WHITE, TFT_BLACK);
-                tft.setTextFont(4);
-                tft.setTextDatum(MC_DATUM);
-                tft.drawString("Connect to config AP", tft.width() / 2, (tft.height()/2)-51);
-                tft.setTextColor(TFT_GREEN1, TFT_BLACK);
-                tft.drawString("\"MrClock_v1\"", tft.width() / 2, tft.height()/2-16);
-                tft.drawString("pwd:\"mrclockv1\"", tft.width() / 2, tft.height()/2+16);
-                tft.setTextColor(TFT_YELLOW);
-                tft.drawString("http://192.168.4.1", tft.width()/2, (tft.height()/2)+51);
-                wm.setConfigPortalTimeout(60); // auto close configportal after n seconds
-                wm.setAPClientCheck(true); // avoid timeout if client connected to softap
-                wm.startConfigPortal("MrClock_v1","mrclockv1");
-                delay(1000);
-                tft.fillScreen(TFT_BLACK);
+            if(btn == btnDwn){
+                nav.doNav(escCmd);
             }
             break;
         default:
@@ -164,10 +105,45 @@ void btn_handler(Button2& btn) {
 }
 void button_loop()
 {
-    btn1.loop();
-    btn2.loop();
+    btnUp.loop();
+    btnDwn.loop();
 }
 
+//WiFi control
+void WiFimode(byte mode){
+    switch (mode){
+        case 0: //client mode
+            if(WiFi.getMode() != WIFI_MODE_STA){
+                WiFi.mode(WIFI_MODE_STA);
+                WiFi.setHostname(hostname); //define hostname
+                WiFi.begin();
+            }else{
+                //reconnect WiFi
+                if (wm.getWiFiIsSaved()==true && WiFi.status()!=WL_CONNECTED && retry<=millis()){
+                    retry = millis() + 2484; //try again within 2.5 sec ;-P
+                    WiFi.reconnect(); //try to connect
+                    DBG(Serial.println("WiFi try to reconnect");)
+                }
+            }
+            break;
+        case 1: //hotspot
+            if(WiFi.getMode() != WIFI_MODE_AP){
+                WiFi.disconnect();
+                WiFi.softAP("MrClock_v1","",5,0,8,false);
+                //IPAddress IP = WiFi.softAPIP();
+            }
+            break;
+        case 2: //OFF
+            if(WiFi.getMode() != WIFI_MODE_NULL){
+                WiFi.disconnect();
+                WiFi.mode(WIFI_OFF);
+            }
+            break;
+        default:
+            WiFi.disconnect();
+            WiFi.mode(WIFI_OFF);
+    }
+}
 //display strength of WiFi - base height 10px, width 14px, actual size is multplicator
 void rssiWiFi(uint16_t x0, uint16_t y0, uint16_t Color, uint16_t Size){
     if(Size<=0){
@@ -253,8 +229,29 @@ void MRclock(int xpos, int ypos, int hh, int mm, int stat, int font){
 void setup()
 {
     Serial.begin(115200);
-    Serial.println("Start MrClock v1 display");
     delay(500);
+    Serial.println("Start MrClock v1 display");
+
+    //menu settings
+    nav.idleTask=idle;//point a function to be used when menu is suspended
+    nav.timeOut = 30; //set time out of menu
+    nav.idleOn(); //menu will start on idle state, press select to enter menu
+    options->invertFieldKeys;
+    mainMenu.dirty = true; //let update menu live
+    subSettings.dirty = true; //let update menu live
+
+    nav.showTitle=false; //hide menu title
+    //disable of menu
+    mainMenu[4].disable();  //upgrade firmware, enabled only when is available new firmware
+    if(clockMode==0){ //setting for time and speed is available only in server mode of clock
+        subSettings[1].disable();   //time setting
+	    subSettings[2].disable();   //speed setting
+    }else{
+        subSettings[1].enable();   //time setting
+	    subSettings[2].enable();   //speed setting
+    }
+
+    //Setting of LCD
     tft.init();
     tft.setRotation(1);
     tft.setSwapBytes(true);
@@ -277,38 +274,78 @@ void setup()
     tft.setTextColor(TFT_YELLOW, TFT_BLACK);
     tft.drawString("MrClock display", tft.width()/2, (tft.height()/2)+16);
 
-    //interrupt for button 1
-    btn1.setClickHandler(btn_handler);
-    btn1.setLongClickTime(1500);
-    btn1.setDoubleClickHandler(btn_handler);
-    btn1.setLongClickHandler(btn_handler);
+    //Chip ID of current device
+    uint64_t chipid = ESP.getEfuseMac(); // The chip ID is essentially its MAC address(length: 6 bytes).
+    uint16_t chip = (uint16_t)(chipid >> 32);
+    snprintf(hostname, 23, "MrClock-%04X%08X", chip, (uint32_t)chipid);
 
-    //interrupt for button 2
-    btn2.setClickHandler(btn_handler);
-    btn2.setLongClickTime(1500);
-    btn2.setDoubleClickHandler(btn_handler);
-    btn2.setLongClickHandler(btn_handler);
+    EEPROM.begin(4096); //ini EEPROM
+    if(EEPROM.readByte(0)>3){ //very simple test if device has fresh installation.
+        //new ini of EEPROM
+        EEPROM.writeByte(0,0);  //WiFi mode 0-client
+        EEPROM.writeByte(1,0);  //Language 0-English
+        EEPROM.writeByte(2,0);  //clock mode 0-client
+        EEPROM.writeByte(3,1);  //clock speed
+        EEPROM.writeByte(4,0);  //MrClock hours
+        EEPROM.writeByte(5,0);  //MrClock minutes
+        EEPROM.commit();
+        delay(500);
+    }else{  //get stored data from EEPROM
+        modeWiFi = EEPROM.readByte(0);
+        lang = EEPROM.readByte(1);
+        clockMode = EEPROM.readByte(2);
+        mrSetSpeed = EEPROM.readByte(3);
+        mHH = EEPROM.readByte(4);
+        mMM = EEPROM.readByte(5);
+    }
 
-    wm.setConnectTimeout(20); // how long to try to connect for before continuing
-    wm.setConfigPortalTimeout(5); // unfortunately I had to add this row. I can't get saved credentials from WiFiManager
-    //if(wm.getWiFiIsSaved()==true){} not working:-(
-    bool res = wm.autoConnect(); //connect to WiFi via WiFiManager
+    MrSpeed=1000/mrSetSpeed;
 
-    DBG(
+    //interrupt for up button
+    btnUp.setClickHandler(btn_handler);
+    btnUp.setLongClickTime(700);
+    btnUp.setLongClickHandler(btn_handler);
+    btnUp.setDebounceTime(10);
+
+    //interrupt for down button
+    btnDwn.setClickHandler(btn_handler);
+    btnDwn.setLongClickTime(700);
+    btnDwn.setLongClickHandler(btn_handler);
+    btnDwn.setDebounceTime(10);
+
+    // WiFi
+    if(modeWiFi==0){ //Client mode
+        DBG(Serial.println(hostname);)
+        WiFi.mode(WIFI_MODE_STA);
+        WiFi.setHostname(hostname); //define hostname
+        wm.setConnectTimeout(20); // how long to try to connect for before continuing
+        wm.setConfigPortalTimeout(5); // unfortunately I had to add this row. I can't get saved credentials from WiFiManager
+        //if(wm.getWiFiIsSaved()==true){} not working:-(
+        bool res = wm.autoConnect(); //connect to WiFi via WiFiManager
+
+        DBG(
         if(!res) {
             Serial.println("Failed to connect");
         }
         else {
             Serial.println("connected...");
         }
-    )
+        )
 
-    //remote upload firmware
-    esp32FOTA.setManifestURL( manifest_url );
-    esp32FOTA.printConfig();
-    DBG(Serial.println("Check if is available new firmware");)
-    //Show there is new firmware
-    update = esp32FOTA.execHTTPcheck();
+        //remote upload firmware
+        esp32FOTA.setManifestURL( manifest_url );
+        esp32FOTA.printConfig();
+        DBG(Serial.println("Check if is available new firmware");)
+        //Show there is new firmware
+        update = esp32FOTA.execHTTPcheck();
+    }else{
+        delay(1000);
+    }
+    if(modeWiFi==1){    //server mode
+        WiFi.disconnect();
+        WiFi.softAP("MrClock_v1","",5,0,8,false);
+    }
+
     tft.fillScreen(TFT_BLACK); //blank display content
 }
 
@@ -318,8 +355,23 @@ void setup()
 void loop()
 {
     button_loop();
-    mPacket();
-    if (!mnShow){
+
+    //choose clock control
+    switch (clockMode){
+        case 0: //client mode
+            mrPacket_client();
+            break;
+        case 1: //server mode
+            mrPacket_server();
+            break;
+        default:
+            mrPacket_client();
+            break;
+    }
+
+    nav.poll();//this device only draws when needed
+
+    if (nav.sleepTask){
         // Show game time
         #ifdef TD
             tft.setTextSize(1);
@@ -342,12 +394,38 @@ void loop()
         tft.setTextSize(1);
         tft.setTextDatum(TL_DATUM);
 
-        //Show RSSI
-        rssiWiFi(5, tft.height()-32, TFT_BLUE,3);
+        // WiFi status
+        switch (modeWiFi){
+            case 0: //Client
+                //Show RSSI
+                rssiWiFi(5, tft.height()-32, TFT_BLUE,3);
+            break;
+            case 1: //Access point
+                tft.setTextColor(TFT_GREEN1,TFT_BLACK);
+                tft.drawString("AP",10,tft.height()-24,4);
+            break;
+            case 2: //OFF
+                tft.setTextColor(TFT_RED,TFT_BLACK);
+                tft.drawString("OFF",5,tft.height()-24,4);
+                clockMode = 1; //when WiFi is off clock can't be in client mode
+            break;
+            default:
+                tft.setTextColor(TFT_RED,TFT_BLACK);
+                tft.drawString("N/A",5,tft.height()-24,4);
+            break;
+        }
 
-        // Show mode C - client, S - server, A - stand alone
+        // Show mode C - client, S - server, A - stand alone server + WiFi off
         tft.setTextColor(TFT_GREY1,TFT_BLACK);
-        tft.drawString("C",60,tft.height()-24);
+        if(clockMode == 0){ // clock in client mode
+            tft.drawString("C",60,tft.height()-24);
+        }else{
+            if(modeWiFi == 2){ //clock in server mode
+                tft.drawString("A",60,tft.height()-24); //when WiFi is off is clock are running stand alone
+            }else{
+                tft.drawString("S",60,tft.height()-24); //server mode
+            }
+        }
 
         // show update info
         if (update)  {
@@ -356,6 +434,7 @@ void loop()
             tft.setTextDatum(TC_DATUM);
             tft.setTextColor(TFT_RED, TFT_BLACK);
             tft.drawString("! UPD !", tft.width()/2, tft.height()-24);
+            mainMenu[4].enable();   //Enable upgrade menu
         }
 
         //showing current game speed
@@ -367,13 +446,17 @@ void loop()
         if (MrSpeed!=0){
             tft.drawNumber(1000/MrSpeed,tft.width()-40,tft.height()-24); //MrSpeed is in miliseconds!
         }
-    }
 
-    //reconnect WiFi
-    if (wm.getWiFiIsSaved()==true && WiFi.status() !=3 && retry <= millis()){
-        retry = millis() + 2484; //try again within 2.5 sec ;-P
-        WiFi.reconnect(); //try to connect
-        DBG(Serial.println("WiFi try to reconnect");)
+        nav.doNav(navCmd(idxCmd,1)); //reset menu to top
+
+        if(clockMode==0){ //setting for time and speed is available only in server mode of clock
+            subSettings[1].disable();   //time setting
+            subSettings[2].disable();   //speed setting
+        }else{
+            subSettings[1].enable();   //time setting
+            subSettings[2].enable();   //speed setting
+        }
     }
+    WiFimode(modeWiFi); //WiFi control
     delay(50); //safe for ESP32
 }

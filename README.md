@@ -46,16 +46,16 @@ Enter to setting long press top button (>700ms)
 For acknowledge also long press top button
 During changing of value are buttons swapped. I have it in ToDo:-)
 Structure of menu:
-    -Clock client/server
-    -WiFi Client/Hotspot/off
-    -Settings-
-        -Start setting AP (for setting of SSID through WiFiManager)
-        -Time (available only at clkock server mode)
-        -Speed (available only at clkock server mode)
-        << Back
-    -About
-    -UPGRADE (available only when is ready new Upgrade on github, long press top button)
-    -Exit
+ - Clock client/server
+ - WiFi Client/Hotspot/off
+ - Settings
+  - Start setting AP (for setting of SSID through WiFiManager)
+  - Time (available only at clkock server mode)
+  - Speed (available only at clkock server mode)
+  - Back
+ - About
+ - UPGRADE (available only when is ready new Upgrade on github, long press top button)
+ - Exit
 
 For connection to SSID (WiFi) use menu access.
 How to connect is shown on display. After start of WiFiManager you have 60sec for connection.

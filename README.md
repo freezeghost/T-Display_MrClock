@@ -44,7 +44,7 @@ Since version 0.3.0 is available menu for access to menu press top button
 Move up and down use both button :-)
 Enter to setting long press top button (>700ms)
 For acknowledge also long press top button
-During changing of value are buttons swapped. I have it in ToDo:-)
+
 Structure of menu:
 
 - Clock client/server
@@ -63,7 +63,8 @@ How to connect is shown on display. After start of WiFiManager you have 60sec fo
 Then WiFiManager is automaticaly shutdown.
 With WiFimanager you can also delete stored credentials of set WiFi.
 
-When on display is showen red ! UPD ! is ready new firmware version. For update press top button for install.
+When on display is showen red ! UPD ! is ready new firmware version. On firmware lower then 0.3.0 for update press top button for install.
+On newer firmware go to menu and start there:-).
 During update do not disconnect power supply! Whole process can take up to 5 minutes.
 
 3D file is made with DesignSpark Mechanical version 6.0.3. Software is provided for free of charge at RS-Componnets.

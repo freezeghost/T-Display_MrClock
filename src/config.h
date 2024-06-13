@@ -1,4 +1,4 @@
-const char* version = "0.3.0"; //actual version of firmware
+const char* version = "0.3.1"; //actual version of firmware
 
 #ifndef TFT_DISPOFF
   #define TFT_DISPOFF 0x28

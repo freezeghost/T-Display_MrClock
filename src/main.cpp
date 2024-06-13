@@ -8,9 +8,6 @@ for open of menu press top button
 #include <Arduino.h>
 #include <EEPROM.h>
 
-//#include <cstring>
-//#include <iostream>
-
 #include "TFT_eSPI.h"
 
 #include <WiFi.h>
@@ -236,7 +233,7 @@ void setup()
     nav.idleTask=idle;//point a function to be used when menu is suspended
     nav.timeOut = 30; //set time out of menu
     nav.idleOn(); //menu will start on idle state, press select to enter menu
-    options->invertFieldKeys;
+    options->invertFieldKeys=true; //Swap buttons for editting values
     mainMenu.dirty = true; //let update menu live
     subSettings.dirty = true; //let update menu live
 
@@ -440,7 +437,7 @@ void loop()
         //showing current game speed
         if(MrSpeedPrev!=MrSpeed){
             MrSpeedPrev=MrSpeed; //store current speed
-            tft.fillRect(tft.width()-40,tft.height()-30,20,30,TFT_BLACK); //delete previous value
+            tft.fillRect(tft.width()-40,tft.height()-30,39,30,TFT_BLACK); //delete previous value
         }
         tft.setTextColor(TFT_BLUE,TFT_BLACK);
         if (MrSpeed!=0){

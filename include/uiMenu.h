@@ -27,6 +27,16 @@ result idle(menuOut& o,idleEvent e) {
   return proceed;
 }
 
+result EnableMnu(){
+  MrClock_status=1;
+  return proceed;
+}
+
+result DisableMnu(){
+  MrClock_status=1;
+  return proceed;
+}
+
 void showAbout(){
   tft.fillScreen(TFT_BLACK);
   tft.setTextColor(TFT_YELLOW, TFT_BLACK);
@@ -58,7 +68,6 @@ void startWiFiManager(){
   wm.setConfigPortalTimeout(60); // auto close configportal after n seconds
   wm.setAPClientCheck(true); // avoid timeout if client connected to softap
   wm.startConfigPortal("MrClock_v1","mrclockv1");
-  delay(1000);
   tft.fillScreen(TFT_BLACK);
 }
 
@@ -78,19 +87,15 @@ void doUpgrade(){
   tft.fillScreen(TFT_BLACK);
 }
 
-void doStopClock(){
-  MrClock_status=1;
-}
-
 //define a pad style menu (single line menu)
 PADMENU(padTime,"Time ",doNothing,noEvent,wrapStyle
-  ,FIELD(mHH,"",":",0,23,1,1,doNothing,noEvent,wrapStyle)
-  ,FIELD(mMM,"","",0,59,1,1,doNothing,noEvent,wrapStyle)
+  ,FIELD(mHH,"",":",0,23,1,0,doNothing,noEvent,wrapStyle)
+  ,FIELD(mMM,"","",0,59,1,0,doNothing,noEvent,wrapStyle)
 );
 
-SELECT(clockMode, selClock, "Clock: ", doNothing, noEvent, wrapStyle
-  ,VALUE("Client",0,doNothing,noEvent)
-  ,VALUE("Server",1,doStopClock,enterEvent)
+SELECT(clockMode, selClock, "Clock ", doNothing, noEvent, wrapStyle
+  ,VALUE("Client",0,DisableMnu,enterEvent)
+  ,VALUE("Server",1,EnableMnu,enterEvent)
 );
 
 SELECT(modeWiFi,selWiFi,"WiFi ",doNothing,noEvent,wrapStyle //can be changed to CHOOSE with open sub menu and display all posibilities
@@ -102,7 +107,7 @@ SELECT(modeWiFi,selWiFi,"WiFi ",doNothing,noEvent,wrapStyle //can be changed to 
 MENU(subSettings,"Settings",doNothing,noEvent,wrapStyle
   ,OP("Start setting AP",startWiFiManager,enterEvent)
   ,SUBMENU(padTime)
-  ,FIELD(mrSetSpeed,"Speed ","",1,10,1,1,setSpeed,enterEvent,wrapStyle)
+  ,FIELD(mrSetSpeed,"Speed ","",1,10,1,0,setSpeed,enterEvent,wrapStyle)
   ,EXIT("<< Back")
 );
 

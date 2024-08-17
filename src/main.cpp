@@ -34,6 +34,8 @@ char hostname[23];
 byte modeWiFi = 0; //WiFi mode 0-client; 1-server; 2-OFF stored in EEPROM 0
 long retry=0; //retry time for testing reconnect to WiFi
 bool update = false; //marker for available update
+bool WMConfigShow = false;
+long wmTimeout = 0;
 //TODO
 byte lang = 0;  //Language 0-English; 1-Czech; 2-German stored in EEPROM 1
 
@@ -96,7 +98,7 @@ void btn_handler(Button2& btn) {
             }
             break;
         default:
-            DBG(Serial.print("Default case ");)
+            DBG(Serial.println("Default case");)
             break;
     }
 }
@@ -342,7 +344,6 @@ void setup()
         WiFi.disconnect();
         WiFi.softAP("MrClock_v1","",5,0,8,false);
     }
-
     tft.fillScreen(TFT_BLACK); //blank display content
 }
 
@@ -368,7 +369,7 @@ void loop()
 
     nav.poll();//this device only draws when needed
 
-    if (nav.sleepTask){
+    if (nav.sleepTask && wm.getConfigPortalActive()==false){
         // Show game time
         #ifdef TD
             tft.setTextSize(1);
@@ -446,14 +447,8 @@ void loop()
 
         nav.doNav(navCmd(idxCmd,1)); //reset menu to top
 
-        if(clockMode==0){ //setting for time and speed is available only in server mode of clock
-            subSettings[1].disable();   //time setting
-            subSettings[2].disable();   //speed setting
-        }else{
-            subSettings[1].enable();   //time setting
-            subSettings[2].enable();   //speed setting
-        }
+        WiFimode(modeWiFi); //WiFi control
     }
-    WiFimode(modeWiFi); //WiFi control
+
     delay(50); //safe for ESP32
 }

@@ -24,9 +24,7 @@ for open of menu press top button
 
 TFT_eSPI tft = TFT_eSPI();//Invoke custom library
 
-Button2 btnUp(BUTTON_2); // Initialize the up button
-Button2 btnDwn(BUTTON_1); // Initialize the down button
-Button2 btn;
+Button2 btnUp, btnDwn;  //change control of buttons for solving "Long press button react after release #3"
 
 WiFiManager wm;
 
@@ -34,7 +32,7 @@ char hostname[23];
 byte modeWiFi = 0; //WiFi mode 0-client; 1-server; 2-OFF stored in EEPROM 0
 long retry=0; //retry time for testing reconnect to WiFi
 bool update = false; //marker for available update
-bool WMConfigShow = false;
+bool WMActive = false;
 long wmTimeout = 0;
 //TODO
 byte lang = 0;  //Language 0-English; 1-Czech; 2-German stored in EEPROM 1
@@ -70,38 +68,36 @@ void espDelay(int ms)
 #include <uiMenu.h>
 
 //Control buttons
-void btn_handler(Button2& btn) {
-    switch (btn.getType()) {
-        case single_click:
-            if(btn == btnUp){nav.doNav(downCmd);}   // It's called downCmd because it decreases the index of an array. Visually that would mean the selector goes upwards.
-            if(btn == btnDwn){
-                if (nav.sleepTask){
-                    if(clockMode == 1){ //clock server mode
-                        if(MrClock_status<=1){
-                            MrClock_status=2; //start clock
-                        }else{
-                            MrClock_status=1; //stop clock
-                        }
-                    }
-                }else{ //when menu is up
-                    nav.doNav(upCmd); // It's called upCmd because it increases the index of an array. Visually that would mean the selector goes downwards.
+//short click
+void btnClick(Button2& btn){
+    if(btn == btnUp){nav.doNav(downCmd);}   // It's called downCmd because it decreases the index of an array. Visually that would mean the selector goes upwards.
+    if(btn == btnDwn){
+        if (nav.sleepTask){
+            if(clockMode == 1){ //clock server mode
+                if(MrClock_status<=1){
+                    MrClock_status=2; //start clock
+                }else{
+                    MrClock_status=1; //stop clock
                 }
             }
-            break;
-        case long_click:
-            if(btn == btnUp){
-                if(nav.sleepTask){mrSetSpeed=1000/MrSpeed;}
-                nav.doNav(enterCmd);
-            }
-            if(btn == btnDwn){
-                nav.doNav(escCmd);
-            }
-            break;
-        default:
-            DBG(Serial.println("Default case");)
-            break;
+        }else{ //when menu is up
+            nav.doNav(upCmd); // It's called upCmd because it increases the index of an array. Visually that would mean the selector goes downwards.
+        }
+    }
+    if(wm.getConfigPortalActive()==true){ //Solving issue "Can't exit when is AP setting running #4"
+        DBG(Serial.println("Manually exit ConfigAP");)
+        wm.stopConfigPortal();
     }
 }
+//long hold
+void btnLongClick(Button2& btn){
+    if(btn == btnUp){
+        nav.doNav(enterCmd);
+        if(nav.sleepTask){mrSetSpeed=1000/MrSpeed;}
+    }
+    if(btn == btnDwn){nav.doNav(escCmd);}
+}
+
 void button_loop()
 {
     btnUp.loop();
@@ -229,7 +225,7 @@ void setup()
 {
     Serial.begin(115200);
     delay(500);
-    Serial.println("Start MrClock v1 display");
+    Serial.printf("Start MrClock v1 display firmware %s", version);
 
     //menu settings
     nav.idleTask=idle;//point a function to be used when menu is suspended
@@ -249,6 +245,19 @@ void setup()
         subSettings[1].enable();   //time setting
 	    subSettings[2].enable();   //speed setting
     }
+
+    //setup buttons
+    btnUp.begin(BUTTON_2);
+    btnUp.setLongClickTime(700);
+    btnUp.setDebounceTime(10);
+    btnUp.setClickHandler(btnClick);
+    btnUp.setLongClickDetectedHandler(btnLongClick);    //change from setLongClickHandler for solving "Long press button react after release #3"
+
+    btnDwn.begin(BUTTON_1);
+    btnDwn.setLongClickTime(700);
+    btnDwn.setDebounceTime(10);
+    btnDwn.setClickHandler(btnClick);
+    btnDwn.setLongClickDetectedHandler(btnLongClick);   //change from setLongClickHandler for solving "Long press button react after release #3"
 
     //Setting of LCD
     tft.init();
@@ -300,36 +309,26 @@ void setup()
 
     MrSpeed=1000/mrSetSpeed;
 
-    //interrupt for up button
-    btnUp.setClickHandler(btn_handler);
-    btnUp.setLongClickTime(700);
-    btnUp.setLongClickHandler(btn_handler);
-    btnUp.setDebounceTime(10);
-
-    //interrupt for down button
-    btnDwn.setClickHandler(btn_handler);
-    btnDwn.setLongClickTime(700);
-    btnDwn.setLongClickHandler(btn_handler);
-    btnDwn.setDebounceTime(10);
-
-    // WiFi
+   // WiFi
     if(modeWiFi==0){ //Client mode
         DBG(Serial.println(hostname);)
-        WiFi.mode(WIFI_MODE_STA);
+        WiFi.mode(WIFI_STA);
         WiFi.setHostname(hostname); //define hostname
-        wm.setConnectTimeout(20); // how long to try to connect for before continuing
-        wm.setConfigPortalTimeout(5); // unfortunately I had to add this row. I can't get saved credentials from WiFiManager
-        //if(wm.getWiFiIsSaved()==true){} not working:-(
-        bool res = wm.autoConnect(); //connect to WiFi via WiFiManager
 
-        DBG(
-        if(!res) {
-            Serial.println("Failed to connect");
+        DBG(Serial.printf("Check if is saved WiFi: %i\n", wm.getWiFiIsSaved());)
+        if(wm.getWiFiIsSaved()==true){
+            wm.setConnectTimeout(20); // how long to try to connect for before continuing
+            bool res = wm.autoConnect(); //connect to WiFi via WiFiManager
+
+            DBG(
+            if(!res) {
+                Serial.println("Failed to connect");
+            }
+            else {
+                Serial.println("connected...");
+            }
+            )
         }
-        else {
-            Serial.println("connected...");
-        }
-        )
 
         //remote upload firmware
         esp32FOTA.setManifestURL( manifest_url );
@@ -368,7 +367,7 @@ void loop()
     }
 
     nav.poll();//this device only draws when needed
-
+    //base screen show
     if (nav.sleepTask && wm.getConfigPortalActive()==false){
         // Show game time
         #ifdef TD
@@ -449,6 +448,28 @@ void loop()
 
         WiFimode(modeWiFi); //WiFi control
     }
+    //Control for WiFiManager
+    //Solving issue "Can't exit when is AP setting running #4"
+    if(wm.getConfigPortalActive()==true){
+        wm.process();
+        if(wmTimeout<=millis() && WiFi.softAPgetStationNum()==0){ 
+            DBG(Serial.println("WiFiManager timeout exit ConfigAP");)
+            wm.stopConfigPortal();
+        }
+        tft.setTextColor(TFT_WHITE, TFT_BLACK);
+        tft.setTextFont(4);
+        tft.setTextDatum(MC_DATUM);
+        tft.drawString("Connect to config AP", tft.width() / 2, (tft.height()/2)-51);
+        tft.setTextColor(TFT_GREEN1, TFT_BLACK);
+        tft.drawString("\"MrClock_v1\"", tft.width() / 2, tft.height()/2-16);
+        tft.drawString("pwd:\"mrclockv1\"", tft.width() / 2, tft.height()/2+16);
+        tft.setTextColor(TFT_YELLOW);
+        tft.drawString("http://192.168.4.1", tft.width()/2, (tft.height()/2)+51);
+        WMActive=true;
 
-    delay(50); //safe for ESP32
+    }else if(WMActive==true){
+        tft.fillScreen(TFT_BLACK);
+        WMActive=false;
+    }
+    //delay(50); //safe for ESP32
 }

@@ -1,4 +1,4 @@
-const char* version = "0.3.2"; //actual version of firmware
+const char* version = "0.3.3"; //actual version of firmware
 
 #ifndef TFT_DISPOFF
   #define TFT_DISPOFF 0x28
@@ -16,7 +16,7 @@ const char* version = "0.3.2"; //actual version of firmware
   #define BUTTON_1      0
 #endif
 
-//#define DEBUG_SER //debug over serial connection
+#define DEBUG_SER //debug over serial connection
 
 //start debug over serial port
 #ifdef DEBUG_SER

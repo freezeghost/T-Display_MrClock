@@ -226,19 +226,9 @@ void startWiFiManager(){
   //need to exit twice due to submenu
   nav.exit(); //hide menu solving issue "a graphics problem by about #8"
   nav.exit(); //hide menu solving issue "a graphics problem by about #8"
-  WMConfigShow = true;
   tft.fillScreen(TFT_BLACK);
-  tft.setTextColor(TFT_WHITE, TFT_BLACK);
-  tft.setTextFont(4);
-  tft.setTextDatum(MC_DATUM);
-  tft.drawString("Connect to config AP", tft.width() / 2, (tft.height()/2)-51);
-  tft.setTextColor(TFT_GREEN1, TFT_BLACK);
-  tft.drawString("\"MrClock_v1\"", tft.width() / 2, tft.height()/2-16);
-  tft.drawString("pwd:\"mrclockv1\"", tft.width() / 2, tft.height()/2+16);
-  tft.setTextColor(TFT_YELLOW);
-  tft.drawString("http://192.168.4.1", tft.width()/2, (tft.height()/2)+51);
-  wm.setConfigPortalTimeout(60); // auto close configportal after n seconds 60
-  wm.setAPClientCheck(true); // avoid timeout if client connected to softap
+  wmTimeout = millis()+60000;
+	wm.setConfigPortalBlocking(false); //Solving issue "Can't exit when is AP setting running #4"
   wm.startConfigPortal("MrClock_v1","mrclockv1");
 }
 

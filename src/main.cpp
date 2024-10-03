@@ -234,17 +234,7 @@ void setup()
     options->invertFieldKeys=true; //Swap buttons for editting values
     mainMenu.dirty = true; //let update menu live
     subSettings.dirty = true; //let update menu live
-
     nav.showTitle=false; //hide menu title
-    //disable of menu
-    mainMenu[4].disable();  //upgrade firmware, enabled only when is available new firmware
-    if(clockMode==0){ //setting for time and speed is available only in server mode of clock
-        subSettings[1].disable();   //time setting
-	    subSettings[2].disable();   //speed setting
-    }else{
-        subSettings[1].enable();   //time setting
-	    subSettings[2].enable();   //speed setting
-    }
 
     //setup buttons
     btnUp.begin(BUTTON_2);
@@ -305,6 +295,17 @@ void setup()
         mrSetSpeed = EEPROM.readByte(3);
         mHH = EEPROM.readByte(4);
         mMM = EEPROM.readByte(5);
+    }
+
+    // ups this block wass in bad position of setup :-)
+    //disable of menu
+    mainMenu[4].disable();  //upgrade firmware, enabled only when is available new firmware
+    if(clockMode==0){ //setting for time and speed is available only in server mode of clock
+        subSettings[1].disable();   //time setting
+	    subSettings[2].disable();   //speed setting
+    }else{
+        subSettings[1].enable();   //time setting
+	    subSettings[2].enable();   //speed setting
     }
 
     MrSpeed=1000/mrSetSpeed;

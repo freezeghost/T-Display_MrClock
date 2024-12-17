@@ -12,7 +12,7 @@ receiving of packets, usually it is aprox 2 sec, but time to time packet is lost
 can be up to 15 sec.
 Last row in display shows few statuses:
 strength of WiFi signal with showing disconection
-mode C - client, S - server, A - stand alone (shown only when WiFi is off and clock mode in server mode).
+mode C - client, S - server, A - stand alone (shown only when WiFi is off and clock is in server mode).
 In long gap can be diplayed red "! UPD !" - signaling availability of firmware update here at github.
 Small number in right bottom coner showing speed of MrClock / timekeeper in fact fastspeed clock.
 
@@ -51,8 +51,8 @@ Structure of menu:
 - WiFi Client/Hotspot/off
 - Settings
   - Start setting AP (for setting of SSID through WiFiManager)
-  - Time (available only at clkock server mode)
-  - Speed (available only at clkock server mode)
+  - Time (available only at clock server mode)
+  - Speed (available only at clock server mode)
   - Back
 - About
 - UPGRADE (available only when is ready new Upgrade on github, long press top button)

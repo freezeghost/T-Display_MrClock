@@ -319,6 +319,7 @@ void setup()
         DBG(Serial.printf("Check if is saved WiFi: %i\n", wm.getWiFiIsSaved());)
         if(wm.getWiFiIsSaved()==true){
             wm.setConnectTimeout(20); // how long to try to connect for before continuing
+            wm.setEnableConfigPortal(false); //Solving issue "no start when wifi is not available #9"
             bool res = wm.autoConnect(); //connect to WiFi via WiFiManager
 
             DBG(
@@ -453,7 +454,7 @@ void loop()
     //Solving issue "Can't exit when is AP setting running #4"
     if(wm.getConfigPortalActive()==true){
         wm.process();
-        if(wmTimeout<=millis() && WiFi.softAPgetStationNum()==0){ 
+        if(wmTimeout<=millis() && WiFi.softAPgetStationNum()==0){
             DBG(Serial.println("WiFiManager timeout exit ConfigAP");)
             wm.stopConfigPortal();
         }
@@ -472,5 +473,4 @@ void loop()
         tft.fillScreen(TFT_BLACK);
         WMActive=false;
     }
-    //delay(50); //safe for ESP32
 }

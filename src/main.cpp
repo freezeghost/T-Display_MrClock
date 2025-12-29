@@ -78,6 +78,12 @@ void btnClick(Button2& btn){
                     MrClock_status=2; //start clock
                 }else{
                     MrClock_status=1; //stop clock
+                    //If in server mode store time to EEPROM
+                    if(clockMode == 1){
+                        EEPROM.write(4, mHH);
+                        EEPROM.write(5, mMM);
+                        EEPROM.commit();
+                    }
                 }
             }
         }else{ //when menu is up
